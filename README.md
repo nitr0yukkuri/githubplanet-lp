@@ -1,1 +1,50 @@
-IyBHaXRIdWJQbGFuZXQgTFAKCkdpdEh1YuOBp+epjeOBv+mHjeOBreOBn+a0u+WLleOCkuOAgeS4lueVjOOBq+OBsuOBqOOBpOOBruaDkeaYn+OBqOOBl+OBpuWPr+imluWMluOBmeOCi+ODqeODs+ODh+OCo+ODs+OCsOODmuODvOOCuOOBp+OBmeOAggoKPiBZb3VyIGNvZGUsIGluIG9yYml0LgoKIyMgUHJldmlldwoKaHR0cHM6Ly9naXRodWJwbGFuZXQtb3JiaXQuaXRsb2dpbjA2MDYuY2hhdGdwdC5zaXRlCgojIyBGZWF0dXJlcwoKLSBHaXRIdWJQbGFuZXTjga7jgrPjg7Pjgrvjg5fjg4jjgpLkvJ3jgYjjgovjgIHlroflrpnjgpLjg4bjg7zjg57jgavjgZfjgZ/jg5XjgqHjg7zjgrnjg4jjg5Pjg6Xjg7wKLSBDU1Pjgafmj4/jgYTjgZ/mg5HmmJ/jg7vou4zpgZPjg7vmmJ/nqbrjga7jg5Pjgrjjg6XjgqLjg6sKLSDnm7Tov5E35pelIC8gMzDml6UgLyDlhajmnJ/plpPjgpLliIfjgormm7/jgYjjgonjgozjgovmtLvli5Xjgrnjg4rjg4Pjg5fjgrfjg6fjg4Pjg4gKLSBHaXRIdWJQbGFuZXTjga7ku5XntYTjgb/jgpLjgIzjgaTjgarjgZAgLyDoqq3jgb/op6PjgY8gLyDnnLrjgoHjgovjgI3jgafntLnku4sKLSBQQ+ODu+OCv+ODluODrOODg+ODiOODu+OCueODnuODvOODiOODleOCqeODs+WvvuW/nAotIGBwcmVmZXJzLXJlZHVjZWQtbW90aW9uYCDjgavlr77lv5zjgZfjgZ/mjqfjgYjjgoHjgarjgqLjg4vjg6Hjg7zjgrfjg6fjg7MKCiMjIFJ1biBsb2NhbGx5CgpgYGBiYXNoCm5wbSBpbnN0YWxsCm5wbSBydW4gZGV2CmBgYAoKUHJvZHVjdGlvbiBidWlsZDoKCmBgYGJhc2gKbnBtIHJ1biBidWlsZApgYGAKCiMjIFRlY2ggc3RhY2sKCi0gUmVhY3QgMTkKLSBUeXBlU2NyaXB0Ci0gdmluZXh0IC8gVml0ZQotIFRhaWx3aW5kIENTUyB2NAotIENsb3VkZmxhcmUgV29ya2Vycy1jb21wYXRpYmxlIG91dHB1dAoKIyMgUHJvamVjdCBzdHJ1Y3R1cmUKCi0gYGFwcC9wYWdlLnRzeGAg4oCUIExQ44Gu5qeL6YCg44Go5rS75YuV44OH44O844K/5YiH44KK5pu/44GICi0gYGFwcC9nbG9iYWxzLmNzc2Ag4oCUIOODk+OCuOODpeOCouODq+OAgeODrOOCueODneODs+OCt+ODluOAgeODouODvOOCt+ODp+ODswotIGBhcHAvbGF5b3V0LnRzeGAg4oCUIOODmuODvOOCuOODoeOCv+ODh+ODvOOCvwotIGBwdWJsaWMvYCDigJQgZmF2aWNvbuOBquOBqeOBruWFrOmWi+OCouOCu+ODg+ODiAoKIyMgTGljZW5zZQoKQWxsIHJpZ2h0cyByZXNlcnZlZC4K
+# GitHubPlanet LP
+
+GitHubで積み重ねた活動を、世界にひとつの惑星として可視化するランディングページです。
+
+> Your code, in orbit.
+
+## Preview
+
+https://githubplanet-orbit.itlogin0606.chatgpt.site
+
+## Features
+
+- GitHubPlanetのコンセプトを伝える、宇宙をテーマにしたファーストビュー
+- CSSで描いた惑星・軌道・星空のビジュアル
+- 直近7日 / 30日 / 全期間を切り替えられる活動スナップショット
+- GitHubPlanetの仕組みを「つなぐ / 読み解く / 眺める」で紹介
+- PC・タブレット・スマートフォン対応
+- `prefers-reduced-motion` に対応した控えめなアニメーション
+
+## Run locally
+
+```bash
+npm install
+npm run dev
+```
+
+Production build:
+
+```bash
+npm run build
+```
+
+## Tech stack
+
+- React 19
+- TypeScript
+- vinext / Vite
+- Tailwind CSS v4
+- Cloudflare Workers-compatible output
+
+## Project structure
+
+- `app/page.tsx` — LPの構造と活動データ切り替え
+- `app/globals.css` — ビジュアル、レスポンシブ、モーション
+- `app/layout.tsx` — ページメタデータ
+- `public/` — faviconなどの公開アセット
+
+## License
+
+All rights reserved.
