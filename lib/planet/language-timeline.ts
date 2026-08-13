@@ -1,4 +1,6 @@
-import { languageProfiles, type LanguageIndex, type LanguageProfile } from "./language-registry";
+import { languageProfiles, type LanguageProfile } from "./language-registry";
+
+export type LanguageIndex = number;
 
 export const LANGUAGE_HOLD_RATIO = 0.72;
 export const LANGUAGE_TRANSITION_RATIO = 1 - LANGUAGE_HOLD_RATIO;
