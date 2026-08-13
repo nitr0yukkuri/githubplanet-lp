@@ -30,7 +30,7 @@ test("server-renders the GitHubPlanet landing page shell", async () => {
 });
 
 test("keeps the source-faithful renderer and smooth-scroll implementation wired", async () => {
-  const [page, hero, header, css, packageJson, registry, timeline, scene, scroll, planetStage, readout] = await Promise.all([
+  const [page, hero, header, css, packageJson, registry, timeline, scene, variant, scroll, planetStage, readout] = await Promise.all([
     readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
     readFile(new URL("../components/landing/HeroSection.tsx", import.meta.url), "utf8"),
     readFile(new URL("../components/landing/LandingHeader.tsx", import.meta.url), "utf8"),
@@ -39,6 +39,7 @@ test("keeps the source-faithful renderer and smooth-scroll implementation wired"
     readFile(new URL("../lib/planet/language-registry.ts", import.meta.url), "utf8"),
     readFile(new URL("../lib/planet/language-timeline.ts", import.meta.url), "utf8"),
     readFile(new URL("../lib/planet/planet-scene.ts", import.meta.url), "utf8"),
+    readFile(new URL("../lib/planet/planet-variant.ts", import.meta.url), "utf8"),
     readFile(new URL("../lib/scroll/use-lenis-scene-progress.ts", import.meta.url), "utf8"),
     readFile(new URL("../components/planet/PlanetStage.tsx", import.meta.url), "utf8"),
     readFile(new URL("../components/planet/LanguageReadout.tsx", import.meta.url), "utf8"),
@@ -60,14 +61,16 @@ test("keeps the source-faithful renderer and smooth-scroll implementation wired"
   assert.match(timeline, /displayIndex/);
   assert.match(scene, /new THREE\.WebGLRenderer/);
   assert.match(scene, /planetGroup\.rotation\.z/);
-  assert.match(scene, /createRayStarMaterial/);
   assert.match(scene, /createMeteor/);
-  assert.match(scene, /afterglowGroup/);
   assert.match(scene, /setAfterglowOpacity/);
-  assert.match(scene, /effectGroup\.add\(variant\.typeScriptShell\)/);
-  assert.match(scene, /afterglowGroup\.add\(createAura/);
+  assert.match(scene, /createPlanetVariant/);
+  assert.doesNotMatch(scene, /createRayStarMaterial|createTypeScriptPlanetShell|createJavaScriptPlanetMaterial/);
+  assert.match(variant, /createRayStarMaterial/);
+  assert.match(variant, /afterglowGroup/);
+  assert.match(variant, /effectGroup\.add\(variant\.typeScriptShell\)/);
+  assert.match(variant, /afterglowGroup\.add\(createAura/);
   for (const effect of ["createCppPlanetLightningMaterial", "createGoPlanetAtmosphere", "createTypeScriptPlanetShell", "createJavaScriptPlanetMaterial", "createRustPlanetDust", "createVueLeafWind", "createRubyPlanetCorona", "createKotlinElectricity"]) {
-    assert.match(scene, new RegExp(effect));
+    assert.match(variant, new RegExp(effect));
   }
   assert.match(scroll, /new Lenis/);
   assert.match(scroll, /prefers-reduced-motion/);
