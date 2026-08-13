@@ -58,6 +58,10 @@ test("keeps the source-faithful renderer and smooth-scroll implementation wired"
   assert.doesNotMatch(registry, /label: "C"/);
   assert.match(registry, /languageProfiles/);
   assert.match(timeline, /LANGUAGE_HOLD_RATIO = 0\.72/);
+  assert.match(timeline, /LANGUAGE_TRANSITION_RATIO = 1 - LANGUAGE_HOLD_RATIO/);
+  assert.match(timeline, /isFinalLanguage = fromIndex === languageProfiles\.length - 1/);
+  assert.match(timeline, /afterglowIndex = fromIndex > 0 \? fromIndex - 1 : -1/);
+  assert.match(timeline, /isHolding: isFinalLanguage \|\| transitionProgress === 0/);
   assert.match(timeline, /displayIndex/);
   assert.match(scene, /new THREE\.WebGLRenderer/);
   assert.match(scene, /planetGroup\.rotation\.z/);
