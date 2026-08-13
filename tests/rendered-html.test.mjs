@@ -69,6 +69,7 @@ test("keeps the source-faithful renderer and smooth-scroll implementation wired"
   assert.match(variant, /afterglowGroup/);
   assert.match(variant, /effectGroup\.add\(variant\.typeScriptShell\)/);
   assert.match(variant, /afterglowGroup\.add\(createAura/);
+  await assert.rejects(() => access(new URL("../lib/planet/language-effects.ts", import.meta.url)));
   for (const effect of ["createCppPlanetLightningMaterial", "createGoPlanetAtmosphere", "createTypeScriptPlanetShell", "createJavaScriptPlanetMaterial", "createRustPlanetDust", "createVueLeafWind", "createRubyPlanetCorona", "createKotlinElectricity"]) {
     assert.match(variant, new RegExp(effect));
   }
