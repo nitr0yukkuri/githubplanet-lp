@@ -30,8 +30,10 @@ test("server-renders the GitHubPlanet landing page shell", async () => {
 });
 
 test("keeps the source-faithful renderer and smooth-scroll implementation wired", async () => {
-  const [page, css, packageJson, registry, timeline, scene, scroll, planetStage, readout] = await Promise.all([
+  const [page, hero, header, css, packageJson, registry, timeline, scene, scroll, planetStage, readout] = await Promise.all([
     readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../components/landing/HeroSection.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../components/landing/LandingHeader.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
     readFile(new URL("../package.json", import.meta.url), "utf8"),
     readFile(new URL("../lib/planet/language-registry.ts", import.meta.url), "utf8"),
@@ -42,10 +44,13 @@ test("keeps the source-faithful renderer and smooth-scroll implementation wired"
     readFile(new URL("../components/planet/LanguageReadout.tsx", import.meta.url), "utf8"),
   ]);
 
-  assert.match(page, /PlanetStage/);
-  assert.match(page, /LanguageReadout/);
+  assert.match(page, /HeroSection/);
+  assert.match(page, /LandingHeader/);
   assert.match(page, /useLenisSceneProgress/);
   assert.doesNotMatch(page, /new THREE\.WebGLRenderer|new Lenis|createMeteor/);
+  assert.match(hero, /PlanetStage/);
+  assert.match(hero, /LanguageReadout/);
+  assert.match(header, /progress \* 100/);
   for (const language of ["TypeScript", "JavaScript", "Rust", "Go", "CSS", "C++", "Java", "Vue", "Ruby", "Kotlin"]) {
     assert.match(registry, new RegExp(language.replace("+", "\\+")));
   }
