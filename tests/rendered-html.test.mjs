@@ -30,11 +30,12 @@ test("server-renders the GitHubPlanet landing page shell", async () => {
 });
 
 test("keeps the source-faithful renderer and smooth-scroll implementation wired", async () => {
-  const [page, css, packageJson, registry, scene, scroll, planetStage, readout] = await Promise.all([
+  const [page, css, packageJson, registry, timeline, scene, scroll, planetStage, readout] = await Promise.all([
     readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
     readFile(new URL("../package.json", import.meta.url), "utf8"),
     readFile(new URL("../lib/planet/language-registry.ts", import.meta.url), "utf8"),
+    readFile(new URL("../lib/planet/language-timeline.ts", import.meta.url), "utf8"),
     readFile(new URL("../lib/planet/planet-scene.ts", import.meta.url), "utf8"),
     readFile(new URL("../lib/scroll/use-lenis-scene-progress.ts", import.meta.url), "utf8"),
     readFile(new URL("../components/planet/PlanetStage.tsx", import.meta.url), "utf8"),
@@ -49,8 +50,9 @@ test("keeps the source-faithful renderer and smooth-scroll implementation wired"
     assert.match(registry, new RegExp(language.replace("+", "\\+")));
   }
   assert.doesNotMatch(registry, /label: "C"/);
-  assert.match(registry, /LANGUAGE_HOLD_RATIO = 0\.72/);
-  assert.match(registry, /displayIndex/);
+  assert.match(registry, /languageProfiles/);
+  assert.match(timeline, /LANGUAGE_HOLD_RATIO = 0\.72/);
+  assert.match(timeline, /displayIndex/);
   assert.match(scene, /new THREE\.WebGLRenderer/);
   assert.match(scene, /planetGroup\.rotation\.z/);
   assert.match(scene, /createRayStarMaterial/);

@@ -1,5 +1,6 @@
 import * as THREE from "three";
-import { languageProfiles, languageWindowFromProgress, type LanguageProfile } from "./language-registry";
+import { languageProfiles, type LanguageProfile } from "./language-registry";
+import { languageWindowFromProgress } from "./language-timeline";
 
 type EffectUpdate = (elapsed: number, delta: number) => void;
 export type LanguageEffect = THREE.Group & {

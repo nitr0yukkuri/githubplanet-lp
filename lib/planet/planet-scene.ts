@@ -48,9 +48,9 @@ import {
 } from "./githubplanet-modules/ruby-planet-solar.js";
 import {
   languageProfiles,
-  languageWindowFromProgress,
   type LanguageProfile,
 } from "./language-registry";
+import { languageWindowFromProgress } from "./language-timeline";
 
 type ProgressRef = { current: number };
 type PlanetMaterial = THREE.Material & {

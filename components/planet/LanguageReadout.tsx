@@ -1,5 +1,6 @@
 import type { CSSProperties } from "react";
-import { languageProfiles, languageWindowFromProgress } from "../../lib/planet/language-registry";
+import { languageProfiles } from "../../lib/planet/language-registry";
+import { languageWindowFromProgress } from "../../lib/planet/language-timeline";
 
 type LanguageReadoutProps = {
   progress: number;
