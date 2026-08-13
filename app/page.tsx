@@ -1,149 +1,76 @@
 "use client";
 
-import { useState } from "react";
+import type { CSSProperties } from "react";
+import { useRef } from "react";
+import { LanguageReadout } from "../components/planet/LanguageReadout";
+import { PlanetStage } from "../components/planet/PlanetStage";
+import { useLenisSceneProgress } from "../lib/scroll/use-lenis-scene-progress";
 
-type RangeKey = "7d" | "30d" | "all";
-
-const snapshots: Record<RangeKey, { label: string; total: string; delta: string; bars: number[] }> = {
-  "7d": { label: "直近7日", total: "42 commits", delta: "+18%", bars: [32, 58, 42, 76, 52, 88, 67, 94, 72, 82, 56, 100] },
-  "30d": { label: "直近30日", total: "138 commits", delta: "+31%", bars: [54, 38, 72, 48, 82, 66, 59, 92, 70, 88, 76, 96] },
-  all: { label: "全期間", total: "2,917 commits", delta: "since 2022", bars: [22, 34, 46, 61, 42, 70, 80, 55, 88, 74, 92, 100] },
-};
+const facts = [
+  { label: "MAIN LANGUAGE", value: "Largest language share", body: "Repository language bytes choose the planet's primary identity." },
+  { label: "TOTAL COMMITS", value: "Planet scale + stars", body: "Accumulated contributions make the body larger and populate its white star shell." },
+  { label: "WEEKLY COMMITS", value: "Rotation speed", body: "Recent activity determines how quickly the planet turns in its fixed skybox." },
+  { label: "PUSH WEBHOOK", value: "Meteor event", body: "A live push arrives as a colored meteor, separate from the planet body." },
+];
 
 const steps = [
-  { number: "01", title: "つなぐ", body: "GitHubアカウントをつなぐだけ。公開リポジトリの活動を読み取ります。" },
-  { number: "02", title: "読み解く", body: "コミット、言語、継続日数をひとつの活動データとして整理します。" },
-  { number: "03", title: "眺める", body: "あなたのコードのリズムが、世界にひとつの惑星として浮かび上がります。" },
+  { number: "01", title: "CONNECT", body: "GitHubの公開活動を読み取り、リポジトリと言語の比率をまとめます。" },
+  { number: "02", title: "TRANSLATE", body: "主言語、コミット数、週間の動きを、惑星の表面と運動へ変換します。" },
+  { number: "03", title: "OBSERVE", body: "惑星を回し、星を眺め、実績やカードとして自分の軌道を共有します。" },
 ];
 
 export default function Home() {
-  const [range, setRange] = useState<RangeKey>("7d");
-  const snapshot = snapshots[range];
+  const heroRef = useRef<HTMLElement | null>(null);
+  const { progress: sceneProgress, progressRef, scrollTo } = useLenisSceneProgress(heroRef);
+  const pageStyle = { "--scene-progress": sceneProgress } as CSSProperties;
 
   return (
-    <main className="page-shell">
+    <main className="site-shell" style={pageStyle}>
       <div className="star-field" aria-hidden="true" />
       <div className="grain" aria-hidden="true" />
-
-      <header className="site-header">
-        <a className="brand" href="#top" aria-label="GitHubPlanet ホーム">
-          <span className="brand-mark" aria-hidden="true"><span /></span>
-          <span>GitHub<span className="brand-accent">Planet</span></span>
-        </a>
-        <nav className="main-nav" aria-label="メインナビゲーション">
-          <a href="#concept">コンセプト</a>
-          <a href="#snapshot">活動データ</a>
-          <a href="#how-it-works">しくみ</a>
-        </nav>
-        <a className="header-cta" href="#start">惑星をつくる <span aria-hidden="true">↗</span></a>
+      <header className="fixed-chrome">
+        <a className="brand" href="#top" onClick={(event) => scrollTo(event, "#top")} aria-label="GitHubPlanet home"><img className="brand-mark" src="/githubplanet-logo.png" alt="GitHubPlanet" /></a>
+        <div className="chrome-center">GITHUB ACTIVITY / 3D PLANET</div>
+        <a className="chrome-link" href="#signals" onClick={(event) => scrollTo(event, "#signals")}>READ THE SIGNALS <span>→</span></a>
       </header>
+      <div className="progress-rail" aria-hidden="true"><span style={{ width: `${Math.max(4, sceneProgress * 100)}%` }} /></div>
 
-      <section className="hero" id="top">
-        <div className="hero-copy">
-          <p className="eyebrow"><span className="eyebrow-dot" /> YOUR CODE, IN ORBIT</p>
-          <h1>コードの軌跡を、<br /><em>ひとつの惑星</em>に。</h1>
-          <p className="hero-lede">GitHubで積み重ねた活動を、動きのある惑星として可視化。あなたの開発リズムを、眺めて楽しもう。</p>
-          <div className="hero-actions">
-            <a className="primary-button" href="#start">GitHubPlanetをはじめる <span aria-hidden="true">→</span></a>
-            <a className="text-link" href="#concept">もっと見る <span aria-hidden="true">↓</span></a>
+      <section ref={heroRef} className="hero-scroll" id="top">
+        <div className="hero-stage">
+          <div className="hero-meta hero-meta-left"><span>ORBIT / 01</span><span>GITHUB ACTIVITY</span></div>
+          <div className="hero-meta hero-meta-right"><span>{String(Math.round(sceneProgress * 100)).padStart(2, "0")} %</span><span>SCROLL TO EXPLORE</span></div>
+          <PlanetStage progressRef={progressRef} />
+          <LanguageReadout progress={sceneProgress} />
+          <div className="hero-title-group">
+            <p className="hero-kicker">YOUR ACTIVITY, SHAPING A PLANET.</p>
+            <h1><span>YOUR CODE,</span><span>IN ORBIT.</span></h1>
+            <p className="hero-subtitle">GitHubの活動が、言語の個性を持つ惑星へ変わる。</p>
+            <a className="wired-button" href="#story" onClick={(event) => scrollTo(event, "#story")}><span>ENTER THE ORBIT</span><b>→</b></a>
           </div>
-          <div className="hero-note"><span className="pulse-dot" /> 公開リポジトリの活動から生成</div>
-        </div>
-
-        <div className="hero-visual" aria-label="活動データから生成された惑星のイメージ">
-          <div className="orbit orbit-one" aria-hidden="true" />
-          <div className="orbit orbit-two" aria-hidden="true" />
-          <div className="planet-shadow" aria-hidden="true" />
-          <div className="planet" aria-hidden="true">
-            <div className="planet-glow" />
-            <div className="planet-land land-one" />
-            <div className="planet-land land-two" />
-            <div className="planet-land land-three" />
-            <div className="planet-crater crater-one" />
-            <div className="planet-crater crater-two" />
-          </div>
-          <div className="satellite satellite-one"><span /> 18 LANGUAGES</div>
-          <div className="satellite satellite-two"><span /> 42 DAY STREAK</div>
-          <div className="visual-coordinates">35°41&apos;N&nbsp;&nbsp;139°41&apos;E</div>
-          <div className="visual-caption"><span>LIVE SNAPSHOT</span><strong>personal / orbit-01</strong></div>
+          <a className="headphone-hint" href="#story" onClick={(event) => scrollTo(event, "#story")} aria-label="Scroll to change language worlds"><span className="headphone-icon" aria-hidden="true">↓</span><span>SCROLL TO CHANGE LANGUAGE WORLDS</span></a>
         </div>
       </section>
 
-      <div className="signal-strip" aria-label="GitHubPlanetの特徴">
-        <span>ACTIVITY, MADE VISIBLE</span><span className="signal-line" /><span>OPEN SOURCE / PERSONAL DATA / YOUR ORBIT</span>
-      </div>
-
-      <section className="concept section-grid" id="concept">
-        <div className="section-intro">
-          <p className="section-kicker">01 — CONCEPT</p>
-          <h2>GitHubの活動を、<br /><span>見える形</span>に。</h2>
-        </div>
-        <div className="concept-body">
-          <p className="large-copy">コードは、書いた瞬間から軌跡になる。GitHubPlanetは、その積み重ねを色・光・動きに変えて、ひと目であなたらしい惑星にします。</p>
-          <div className="code-sample" aria-label="活動ログのサンプル">
-            <div className="code-top"><span /><span /><span /><small>orbit.log</small></div>
-            <p><i>commit</i> <b>7f3a1c</b> <span>feat: tune the horizon</span></p>
-            <p><i>language</i> <b>TypeScript</b> <span>████████░░ 82%</span></p>
-            <p><i>streak</i> <b>42 days</b> <span className="code-green">+ orbit stable</span></p>
-          </div>
-        </div>
+      <section className="story-section reveal" id="story">
+        <div className="section-rail"><span>01</span><span>THE TRANSLATION</span></div>
+        <div className="story-copy"><p className="section-kicker">FROM ACTIVITY TO ATMOSPHERE</p><h2>Invisible work<br /><em>made visible.</em></h2><p className="story-lede">GitHubPlanetは、コードの活動を単なる数字で終わらせない。主言語は表面の性格に、コミットの積み重ねは大きさと星に、最近の動きは回転に変わる。</p></div>
+        <div className="story-log"><div className="log-label"><span>ORBIT.LOG</span><span>LIVE TRANSLATION</span></div><p><i>surface</i><b>mainLanguage</b><span>language identity</span></p><p><i>scale</i><b>totalCommits</b><span>planet size + stars</span></p><p><i>motion</i><b>weeklyCommits</b><span className="code-green">rotation speed</span></p><div className="log-line" /><small>EVERY COMMIT LEAVES A SIGNAL.</small></div>
       </section>
 
-      <section className="snapshot section-grid" id="snapshot">
-        <div className="section-intro">
-          <p className="section-kicker">02 — YOUR SNAPSHOT</p>
-          <h2>活動のリズムを、<br /><span>眺めてみる。</span></h2>
-          <p className="section-description">時間のスケールを変えると、惑星の表情も変わる。小さな習慣から長い旅まで、あなたのペースをそのまま映します。</p>
-        </div>
-        <div className="snapshot-panel">
-          <div className="panel-heading"><span>activity / commits</span><span className="panel-status"><span className="pulse-dot" /> synced</span></div>
-          <div className="range-tabs" role="tablist" aria-label="活動期間">
-            {(Object.keys(snapshots) as RangeKey[]).map((key) => (
-              <button key={key} className={range === key ? "active" : ""} onClick={() => setRange(key)} role="tab" aria-selected={range === key}>
-                {snapshots[key].label}
-              </button>
-            ))}
-          </div>
-          <div className="snapshot-total"><strong>{snapshot.total}</strong><span>{snapshot.delta}</span></div>
-          <div className="chart" aria-label={`${snapshot.label}のコミット数グラフ`}>
-            {snapshot.bars.map((height, index) => <span key={`${range}-${index}`} style={{ height: `${height}%` }} />)}
-          </div>
-          <div className="chart-labels"><span>01</span><span>06</span><span>12</span><span>18</span><span>24</span><span>30</span></div>
-          <div className="panel-footer"><span>last synced 08:42 JST</span><span className="panel-link">view full orbit <b>↗</b></span></div>
-        </div>
+      <section className="snapshot-section reveal" id="signals">
+        <div className="section-rail"><span>02</span><span>THE SIGNALS</span></div>
+        <div className="snapshot-intro"><p className="section-kicker">ACTIVITY, MADE VISIBLE</p><h2>Read<br /><em>your orbit.</em></h2><p className="section-description">惑星の見た目は飾りではなく、GitHubから読んだ活動の役割ごとの結果です。</p></div>
+        <div className="signal-grid">{facts.map((fact) => <article className="signal-card" key={fact.label}><span className="signal-card-label">{fact.label}</span><strong>{fact.value}</strong><p>{fact.body}</p></article>)}</div>
       </section>
 
-      <section className="how-it-works" id="how-it-works">
-        <div className="section-intro centered-intro">
-          <p className="section-kicker">03 — HOW IT WORKS</p>
-          <h2>つなぐだけで、<br /><span>軌道がはじまる。</span></h2>
-        </div>
-        <div className="steps">
-          {steps.map((step, index) => (
-            <div className="step" key={step.number}>
-              <div className="step-top"><span>{step.number}</span>{index < steps.length - 1 && <span className="step-arrow" aria-hidden="true">↗</span>}</div>
-              <h3>{step.title}</h3>
-              <p>{step.body}</p>
-            </div>
-          ))}
-        </div>
+      <section className="process-section reveal" id="process">
+        <div className="section-rail"><span>03</span><span>THE PROCESS</span></div>
+        <div className="process-heading"><p className="section-kicker">ONE CONNECTION / THREE MOVEMENTS</p><h2>Connect.<br />Translate.<br /><em>Observe.</em></h2></div>
+        <div className="steps">{steps.map((step) => <article className="step" key={step.number}><div className="step-top"><span>{step.number}</span><span>↗</span></div><h3>{step.title}</h3><p>{step.body}</p></article>)}</div>
       </section>
 
-      <section className="final-cta" id="start">
-        <div className="cta-orbit" aria-hidden="true"><div className="cta-planet" /></div>
-        <div className="cta-content">
-          <p className="eyebrow"><span className="eyebrow-dot" /> READY FOR LAUNCH</p>
-          <h2>あなたのコードを、<br /><em>宇宙に浮かべよう。</em></h2>
-          <p>最初の惑星は、数秒でつくれます。</p>
-          <a className="primary-button light-button" href="https://github.com/" target="_blank" rel="noreferrer">GitHubからはじめる <span aria-hidden="true">↗</span></a>
-        </div>
-      </section>
-
-      <footer className="site-footer">
-        <a className="brand" href="#top"><span className="brand-mark" aria-hidden="true"><span /></span><span>GitHub<span className="brand-accent">Planet</span></span></a>
-        <p>Make your work visible.</p>
-        <span>© 2026 GitHubPlanet</span>
-      </footer>
+      <section className="final-cta reveal" id="start"><div className="cta-orbit" aria-hidden="true"><div className="cta-planet" /></div><div className="cta-content"><p className="section-kicker">READY FOR LAUNCH</p><h2>Make your work<br /><em>visible.</em></h2><p>最初の惑星は、あなたのGitHub活動からつくられます。</p><a className="wired-button light-button" href="https://github.com/" target="_blank" rel="noreferrer"><span>START WITH GITHUB</span><b>→</b></a></div></section>
+      <footer className="site-footer"><a className="brand" href="#top" onClick={(event) => scrollTo(event, "#top")}><img className="brand-mark" src="/githubplanet-logo.png" alt="GitHubPlanet" /></a><span>MAKE YOUR WORK VISIBLE.</span><span>© 2026 GITHUBPLANET</span></footer>
     </main>
   );
 }

@@ -3,21 +3,13 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "GitHubPlanet — Your code, in orbit.",
-  description: "GitHubで積み重ねた活動を、世界にひとつの惑星として可視化するGitHubPlanet。",
+  description: "GitHubの活動を、言語の個性を持つ3D惑星として眺めるGitHubPlanet。",
   icons: {
     icon: "/favicon.svg",
     shortcut: "/favicon.svg",
   },
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
-  return (
-    <html lang="ja">
-      <body>{children}</body>
-    </html>
-  );
+export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+  return <html lang="ja"><body>{children}</body></html>;
 }
