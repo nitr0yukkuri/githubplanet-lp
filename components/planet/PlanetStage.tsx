@@ -2,20 +2,22 @@
 
 import { useEffect, useRef } from "react";
 import { createPlanetScene } from "../../lib/planet/planet-scene";
+import type { SceneSnapshotRef } from "../../lib/planet/scene-snapshot";
 
 type PlanetStageProps = {
-  progressRef: { current: number };
+  snapshotRef: SceneSnapshotRef;
 };
 
-export function PlanetStage({ progressRef }: PlanetStageProps) {
+export function PlanetStage({ snapshotRef }: PlanetStageProps) {
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return undefined;
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    return createPlanetScene({ container, progressRef, reducedMotion });
-  }, [progressRef]);
+    return createPlanetScene({ container, snapshotRef, reducedMotion });
+  }, [snapshotRef]);
 
   return <div ref={containerRef} className="planet-canvas" aria-hidden="true" />;
 }
+
