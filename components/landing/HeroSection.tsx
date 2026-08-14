@@ -1,23 +1,24 @@
 import type { RefObject } from "react";
+import type { SceneSnapshot, SceneSnapshotRef } from "../../lib/planet/scene-snapshot";
 import { LanguageReadout } from "../planet/LanguageReadout";
 import { PlanetStage } from "../planet/PlanetStage";
-import type { ProgressRef, ScrollTo } from "./types";
+import type { ScrollTo } from "./types";
 
 type HeroSectionProps = {
   heroRef: RefObject<HTMLElement | null>;
-  progress: number;
-  progressRef: ProgressRef;
+  snapshot: SceneSnapshot;
+  snapshotRef: SceneSnapshotRef;
   scrollTo: ScrollTo;
 };
 
-export function HeroSection({ heroRef, progress, progressRef, scrollTo }: HeroSectionProps) {
+export function HeroSection({ heroRef, snapshot, snapshotRef, scrollTo }: HeroSectionProps) {
   return (
     <section ref={heroRef} className="hero-scroll" id="top">
       <div className="hero-stage">
         <div className="hero-meta hero-meta-left"><span>ORBIT / 01</span><span>GITHUB ACTIVITY</span></div>
-        <div className="hero-meta hero-meta-right"><span>{String(Math.round(progress * 100)).padStart(2, "0")} %</span><span>SCROLL TO EXPLORE</span></div>
-        <PlanetStage progressRef={progressRef} />
-        <LanguageReadout progress={progress} />
+        <div className="hero-meta hero-meta-right"><span>{String(Math.round(snapshot.progress * 100)).padStart(2, "0")} %</span><span>SCROLL TO EXPLORE</span></div>
+        <PlanetStage snapshotRef={snapshotRef} />
+        <LanguageReadout snapshot={snapshot} />
         <div className="hero-title-group">
           <p className="hero-kicker">YOUR ACTIVITY, SHAPING A PLANET.</p>
           <h1><span>YOUR CODE,</span><span>IN ORBIT.</span></h1>
@@ -29,3 +30,4 @@ export function HeroSection({ heroRef, progress, progressRef, scrollTo }: HeroSe
     </section>
   );
 }
+
