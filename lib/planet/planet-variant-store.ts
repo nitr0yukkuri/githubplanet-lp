@@ -37,7 +37,7 @@ export function createPlanetVariantStore({ parent, texture, pixelRatio }: Planet
   const update = (snapshot: SceneSnapshot, now: number, windSpeed: number, camera: THREE.Camera) => {
     const from = get(snapshot.language.from);
     const to = get(snapshot.language.to);
-    const blend = THREE.MathUtils.smoothstep(snapshot.language.blend, 0, 1);
+    const blend = snapshot.language.visualBlend;
 
     if (from === to) {
       setVariantOpacity(from, 1);
