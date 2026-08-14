@@ -1,19 +1,18 @@
 import type { CSSProperties } from "react";
-import { languageProfiles } from "../../lib/planet/language-registry";
-import { languageWindowFromProgress } from "../../lib/planet/language-timeline";
+import type { SceneSnapshot } from "../../lib/planet/scene-snapshot";
 
 type LanguageReadoutProps = {
-  progress: number;
+  snapshot: SceneSnapshot;
 };
 
-export function LanguageReadout({ progress }: LanguageReadoutProps) {
-  const languageWindow = languageWindowFromProgress(progress);
+export function LanguageReadout({ snapshot }: LanguageReadoutProps) {
+  const languageWindow = snapshot.language;
   const languageIndex = languageWindow.displayIndex;
-  const activeLanguage = languageProfiles[languageIndex];
+  const activeLanguage = snapshot.activeLanguage;
 
   return (
     <div className="language-readout" aria-live="polite">
-      <div className="language-readout-index">PLANET / {String(languageIndex + 1).padStart(2, "0")} — HOLD TO OBSERVE</div>
+      <div className="language-readout-index">PLANET / {String(languageIndex + 1).padStart(2, "0")} 窶・HOLD TO OBSERVE</div>
       <div className="language-readout-main">
         <span className="language-logo" style={{ "--language-color": activeLanguage.color } as CSSProperties}>
           <img className="language-logo-image" src={activeLanguage.logo} alt={`${activeLanguage.label} logo`} />
@@ -25,3 +24,4 @@ export function LanguageReadout({ progress }: LanguageReadoutProps) {
     </div>
   );
 }
+
