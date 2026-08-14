@@ -1,4 +1,4 @@
-import { languageProfiles, type LanguageProfile } from "./language-registry";
+import { languageProfiles, type LanguageProfile } from "./language-catalog";
 
 export type LanguageIndex = number;
 
@@ -61,3 +61,4 @@ export function languageWindowFromProgress(progress: number): LanguageWindow {
     afterglow,
   };
 }
+
