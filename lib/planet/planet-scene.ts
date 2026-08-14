@@ -73,6 +73,7 @@ export function createPlanetScene({
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(38, 1, 0.1, 100);
   camera.position.set(0, 0.05, 8.4);
+  camera.lookAt(0, 0, 0);
   const pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
   renderer.setPixelRatio(pixelRatio);
   renderer.setClearColor(0x02030a, 0);
@@ -181,15 +182,6 @@ export function createPlanetScene({
       spawnMeteor(windowState.from);
       nextMeteorAt += 4.8;
     }
-
-    const targetX = THREE.MathUtils.lerp(0, 0.7, progress);
-    const targetY = THREE.MathUtils.lerp(0, -0.1, progress);
-    const targetZ = THREE.MathUtils.lerp(8.4, 7.4, progress);
-    planetGroup.position.x = THREE.MathUtils.damp(planetGroup.position.x, targetX, 4.2, delta);
-    planetGroup.position.y = THREE.MathUtils.damp(planetGroup.position.y, targetY, 4.2, delta);
-    planetGroup.scale.setScalar(THREE.MathUtils.damp(planetGroup.scale.x, THREE.MathUtils.lerp(1, 1.12, progress), 4.2, delta));
-    camera.position.z = THREE.MathUtils.damp(camera.position.z, targetZ, 3.5, delta);
-    camera.lookAt(targetX * 0.18, targetY, 0);
 
     if (!reducedMotion) {
       planetGroup.rotation.z += delta * bodySpeed;
