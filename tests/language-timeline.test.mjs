@@ -46,22 +46,26 @@ test("language timeline holds, transitions, and clamps at its boundaries", async
   const holdBoundary = languageWindowFromProgress(LANGUAGE_HOLD_RATIO / LANGUAGE_TIMELINE_LENGTH);
   assert.equal(holdBoundary.fromIndex, 0);
   assert.equal(holdBoundary.blend, 0);
+  assert.equal(holdBoundary.visualBlend, 0);
   assert.equal(holdBoundary.isHolding, true);
 
   const transitionMidpoint = languageWindowFromProgress(0.86 / LANGUAGE_TIMELINE_LENGTH);
   assert.equal(transitionMidpoint.fromIndex, 0);
   assert.equal(transitionMidpoint.displayIndex, 1);
+  assert.equal(transitionMidpoint.visualBlend, 0.5);
   assert.equal(transitionMidpoint.isHolding, false);
 
   const nextLanguage = languageWindowFromProgress(1 / LANGUAGE_TIMELINE_LENGTH);
   assert.equal(nextLanguage.fromIndex, 1);
   assert.equal(nextLanguage.displayIndex, 1);
+  assert.equal(nextLanguage.visualBlend, 0);
   assert.equal(nextLanguage.afterglowIndex, 0);
 
   const final = languageWindowFromProgress(1);
   assert.equal(final.fromIndex, languageProfiles.length - 1);
   assert.equal(final.toIndex, languageProfiles.length - 1);
   assert.equal(final.displayIndex, languageProfiles.length - 1);
+  assert.equal(final.visualBlend, 1);
   assert.equal(final.isHolding, true);
   assert.equal(languageWindowFromProgress(-1).phase, 0);
   assert.equal(languageWindowFromProgress(2).phase, LANGUAGE_TIMELINE_LENGTH);
