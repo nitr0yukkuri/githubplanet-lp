@@ -45,7 +45,7 @@ import {
   createRubyPlanetMaterial,
   updateRubyPlanetSolar,
 } from "./githubplanet-modules/ruby-planet-solar.js";
-import type { LanguageProfile } from "./language-registry";
+import type { LanguageProfile } from "./language-catalog";
 import { seeded, TAU } from "./planet-random";
 
 export type PlanetMaterial = THREE.Material & {
@@ -78,6 +78,8 @@ export type PlanetVariant = {
   rustDust?: THREE.Group;
   rubyMaterial?: PlanetMaterial;
   rubyCorona?: THREE.Group;
+  materials: PlanetMaterial[];
+  afterglowMaterials: PlanetMaterial[];
 };
 
 const PLANET_RADIUS = 2.18;
@@ -93,37 +95,47 @@ export function forEachMaterial(group: THREE.Object3D, callback: (material: Plan
   });
 }
 
+function collectMaterials(group: THREE.Object3D) {
+  const materials: PlanetMaterial[] = [];
+  forEachMaterial(group, (material) => materials.push(material));
+  return materials;
+}
+
+function updateMaterialOpacity(materials: PlanetMaterial[], opacity: number, forceDepthWrite: boolean) {
+  materials.forEach((material) => {
+    const baseOpacity = typeof material.userData.lpBaseOpacity === "number"
+      ? material.userData.lpBaseOpacity
+      : material.opacity;
+    const baseDepthWrite = typeof material.userData.lpBaseDepthWrite === "boolean"
+      ? material.userData.lpBaseDepthWrite
+      : material.depthWrite;
+    const nextDepthWrite = forceDepthWrite ? baseDepthWrite : false;
+
+    material.userData.lpBaseOpacity = baseOpacity;
+    material.userData.lpBaseDepthWrite = baseDepthWrite;
+    material.userData.lpBaseTransparent = material.userData.lpBaseTransparent ?? material.transparent;
+
+    const materialProgramChanged = material.transparent !== true || material.depthWrite !== nextDepthWrite;
+    material.transparent = true;
+    material.depthWrite = nextDepthWrite;
+    material.opacity = baseOpacity * opacity;
+    if (materialProgramChanged) material.needsUpdate = true;
+  });
+}
+
 export function setVariantOpacity(variant: PlanetVariant, opacity: number) {
   const visible = opacity > 0.001;
   variant.group.visible = visible;
   variant.effectGroup.visible = visible;
   variant.afterglowGroup.visible = visible;
-  forEachMaterial(variant.group, (material) => {
-    const baseOpacity = typeof material.userData.lpBaseOpacity === "number"
-      ? material.userData.lpBaseOpacity
-      : material.opacity;
-    material.userData.lpBaseOpacity = baseOpacity;
-    material.transparent = true;
-    material.depthWrite = opacity > 0.995 ? material.depthWrite : false;
-    material.opacity = baseOpacity * opacity;
-    material.needsUpdate = true;
-  });
+  updateMaterialOpacity(variant.materials, opacity, opacity > 0.995);
 }
 
 export function setAfterglowOpacity(variant: PlanetVariant, opacity: number) {
   const visible = opacity > 0.001;
   variant.group.visible = visible;
   variant.afterglowGroup.visible = visible;
-  forEachMaterial(variant.afterglowGroup, (material) => {
-    const baseOpacity = typeof material.userData.lpBaseOpacity === "number"
-      ? material.userData.lpBaseOpacity
-      : material.opacity;
-    material.userData.lpBaseOpacity = baseOpacity;
-    material.transparent = true;
-    material.depthWrite = false;
-    material.opacity = baseOpacity * opacity;
-    material.needsUpdate = true;
-  });
+  updateMaterialOpacity(variant.afterglowMaterials, opacity, false);
 }
 
 function createRayStarMaterial(pixelRatio: number) {
@@ -252,43 +264,59 @@ export function createPlanetVariant(profile: LanguageProfile, texture: THREE.Tex
   group.add(planet);
   group.add(effectGroup, afterglowGroup);
 
-  const variant: PlanetVariant = { profile, group, effectGroup, afterglowGroup, material };
+  const variant: PlanetVariant = {
+    profile,
+    group,
+    effectGroup,
+    afterglowGroup,
+    material,
+    materials: [],
+    afterglowMaterials: [],
+  };
   const effect = profile.effect;
   if (effect === "go" || effect === "vue") {
     variant.goMaterial = material;
-    variant.goAtmosphere = createGoPlanetAtmosphere(THREE, PLANET_RADIUS, 1, effect);
-    effectGroup.add(variant.goAtmosphere);
+    const goAtmosphere = createGoPlanetAtmosphere(THREE, PLANET_RADIUS, 1, effect);
+    variant.goAtmosphere = goAtmosphere;
+    effectGroup.add(goAtmosphere);
   }
   if (effect === "vue") {
-    variant.vueLeaves = createVueLeafWind(THREE, PLANET_RADIUS);
-    effectGroup.add(variant.vueLeaves);
+    const vueLeaves = createVueLeafWind(THREE, PLANET_RADIUS);
+    variant.vueLeaves = vueLeaves;
+    effectGroup.add(vueLeaves);
   }
   if (effect === "typescript") {
     variant.typeScriptMaterial = material;
-    variant.typeScriptShell = createTypeScriptPlanetShell(THREE, PLANET_RADIUS);
-    effectGroup.add(variant.typeScriptShell);
+    const typeScriptShell = createTypeScriptPlanetShell(THREE, PLANET_RADIUS);
+    variant.typeScriptShell = typeScriptShell;
+    effectGroup.add(typeScriptShell);
   }
   if (effect === "javascript") variant.javaScriptMaterial = material;
   if (effect === "cpp") variant.cppMaterial = material;
   if (effect === "css") variant.cssMaterial = material;
   if (effect === "kotlin") {
     variant.kotlinMaterial = material;
-    variant.kotlinElectricity = createKotlinElectricity(THREE, PLANET_RADIUS);
-    effectGroup.add(variant.kotlinElectricity);
+    const kotlinElectricity = createKotlinElectricity(THREE, PLANET_RADIUS);
+    variant.kotlinElectricity = kotlinElectricity;
+    effectGroup.add(kotlinElectricity);
   }
   if (effect === "rust") {
     variant.rustMaterial = material;
-    variant.rustDust = createRustPlanetDust(THREE, PLANET_RADIUS);
-    effectGroup.add(variant.rustDust);
+    const rustDust = createRustPlanetDust(THREE, PLANET_RADIUS);
+    variant.rustDust = rustDust;
+    effectGroup.add(rustDust);
   }
   if (effect === "ruby") {
     variant.rubyMaterial = material;
-    variant.rubyCorona = createRubyPlanetCorona(THREE, PLANET_RADIUS, material.userData.rubySolarUniforms);
-    effectGroup.add(variant.rubyCorona);
+    const rubyCorona = createRubyPlanetCorona(THREE, PLANET_RADIUS, material.userData.rubySolarUniforms);
+    variant.rubyCorona = rubyCorona;
+    effectGroup.add(rubyCorona);
   }
 
   afterglowGroup.add(createStars(pixelRatio, PLANET_RADIUS));
   afterglowGroup.add(createAura(profile.color, PLANET_RADIUS));
+  variant.materials = collectMaterials(group);
+  variant.afterglowMaterials = collectMaterials(afterglowGroup);
   setVariantOpacity(variant, 0);
   return variant;
 }
@@ -309,3 +337,4 @@ export function updatePlanetVariant(variant: PlanetVariant, now: number, windSpe
   updateRubyPlanetSolar(variant.rubyMaterial, now);
   updateRubyPlanetSolar(variant.rubyCorona, now, camera);
 }
+
