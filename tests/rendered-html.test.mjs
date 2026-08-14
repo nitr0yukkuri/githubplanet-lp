@@ -100,6 +100,7 @@ test("keeps the source-faithful renderer and smooth-scroll implementation wired"
   assert.match(scroll, /new Lenis/);
   assert.match(scroll, /prefers-reduced-motion/);
   assert.match(planetStage, /snapshotRef/);
+  assert.match(planetStage, /planet-fallback/);
   assert.match(readout, /snapshot/);
   assert.match(readout, /--language-color/);
   assert.match(readout, /visualBlend/);
