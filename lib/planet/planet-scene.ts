@@ -137,7 +137,7 @@ export function createPlanetScene({
     variantStore.update(snapshot, now, windSpeed, camera);
 
     if (elapsedSinceStart > nextMeteorAt) {
-      spawnMeteor(snapshot.language.from);
+      spawnMeteor(snapshot.activeLanguage);
       nextMeteorAt += 4.8;
     }
 
