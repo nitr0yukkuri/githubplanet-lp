@@ -66,16 +66,16 @@ button { font: inherit; }
 .planet-tag span { display: inline-block; width: 5px; height: 5px; margin-right: 7px; border: 1px solid var(--cyan); border-radius: 50%; vertical-align: 1px; }
 .tag-one { top: 19%; right: -3%; }
 .tag-two { bottom: 16%; left: -5%; }
-.language-readout { position: absolute; z-index: 6; left: 50%; top: 18%; width: min(300px, calc(100vw - 44px)); color: var(--muted); font-family: "SFMono-Regular", Consolas, monospace; text-align: center; transform: translate(-50%, calc(var(--scene-progress) * -4vh)); transition: transform .1s linear; }
+.language-readout { position: absolute; z-index: 6; left: 32px; top: 24%; width: min(300px, calc(100vw - 44px)); color: var(--muted); font-family: "SFMono-Regular", Consolas, monospace; text-align: left; transform: translateY(calc(var(--scene-progress) * -4vh)); transition: transform .1s linear; }
 .language-readout-index { margin-bottom: 15px; color: var(--faint); font-size: 8px; letter-spacing: .14em; line-height: 1.6; }
-.language-readout-main { display: flex; align-items: center; justify-content: center; gap: 13px; color: var(--ink); }
+.language-readout-main { display: flex; align-items: center; justify-content: flex-start; gap: 13px; color: var(--ink); }
 .language-logo { display: grid; width: 68px; height: 68px; place-items: center; flex: 0 0 auto; border: 1px solid color-mix(in srgb, var(--language-color), transparent 42%); border-radius: 14px; background: color-mix(in srgb, var(--language-color), #08090d 82%); box-shadow: 0 0 26px color-mix(in srgb, var(--language-color), transparent 55%); }
 .language-logo-image { display: block; width: 48px; height: 48px; object-fit: contain; filter: drop-shadow(0 0 8px color-mix(in srgb, var(--language-color), transparent 38%)); }
 .language-logo-image[alt="Go logo"] { width: 60px; height: 32px; }
 .language-readout-main strong, .language-readout-main > div > span { display: block; }
 .language-readout-main strong { font-family: "Avenir Next", "Helvetica Neue", sans-serif; font-size: 17px; font-weight: 500; letter-spacing: -.03em; }
 .language-readout-main div span { margin-top: 5px; color: var(--language-color); font-size: 8px; letter-spacing: .13em; }
-.language-readout p { max-width: 190px; margin: 14px auto 17px; color: var(--muted); font-size: 10px; line-height: 1.7; }
+.language-readout p { max-width: 190px; margin: 14px 0 17px; color: var(--muted); font-size: 10px; line-height: 1.7; }
 .language-progress { height: 1px; background: rgba(220,225,232,.14); }
 .language-progress span { display: block; height: 1px; background: var(--language-color); box-shadow: 0 0 10px var(--language-color); transition: width .25s linear, background .35s ease; }
 .hero-title-group { position: absolute; z-index: 5; left: 32px; bottom: 10%; width: min(360px, 34vw); text-align: left; opacity: max(0, calc(1 - var(--scene-progress) * 2.4)); transform: translateY(calc(var(--scene-progress) * -8vh)); transition: transform .1s linear, opacity .25s ease; }
@@ -188,7 +188,7 @@ h2 em { color: var(--violet); font-style: normal; }
   .hero-meta-left { left: 18px; }
   .hero-meta-right { right: 18px; }
   .hero-planet-wrap { width: 86vw; height: 86vw; top: 48%; }
-  .language-readout { left: 50%; top: 18%; width: calc(100vw - 36px); }
+  .language-readout { left: 18px; top: 23%; width: calc(100vw - 36px); }
   .hero-title-group { left: 18px; bottom: 8%; width: calc(100% - 36px); }
   .hero-kicker { font-size: 8px; letter-spacing: .12em; }
   h1 { font-size: clamp(43px, 12vw, 70px); letter-spacing: .02em; }
@@ -222,3 +222,4 @@ h2 em { color: var(--violet); font-style: normal; }
   .reveal { opacity: 1; transform: none; transition: none; }
   .planet, .chart span { animation: none; }
 }
+
