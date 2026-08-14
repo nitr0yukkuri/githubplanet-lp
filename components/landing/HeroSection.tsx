@@ -17,7 +17,7 @@ export function HeroSection({ heroRef, snapshot, snapshotRef, scrollTo }: HeroSe
       <div className="hero-stage">
         <div className="hero-meta hero-meta-left"><span>ORBIT / 01</span><span>GITHUB ACTIVITY</span></div>
         <div className="hero-meta hero-meta-right"><span>{String(Math.round(snapshot.progress * 100)).padStart(2, "0")} %</span><span>SCROLL TO EXPLORE</span></div>
-        <PlanetStage snapshotRef={snapshotRef} />
+        <PlanetStage snapshotRef={snapshotRef} planetColor={snapshot.activeLanguage.color} />
         <LanguageReadout snapshot={snapshot} />
         <div className="hero-title-group">
           <p className="hero-kicker">YOUR ACTIVITY, SHAPING A PLANET.</p>
