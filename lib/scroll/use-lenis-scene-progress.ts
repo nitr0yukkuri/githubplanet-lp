@@ -1,12 +1,14 @@
 import type { MouseEvent as ReactMouseEvent, RefObject } from "react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import Lenis from "lenis";
+import { sceneSnapshotFromProgress, type SceneSnapshot } from "../planet/scene-snapshot";
 
 const clamp = (value: number, min = 0, max = 1) => Math.min(max, Math.max(min, value));
 
 export function useLenisSceneProgress(heroRef: RefObject<HTMLElement | null>) {
-  const [progress, setProgress] = useState(0);
-  const progressRef = useRef(0);
+  const initialSnapshot = sceneSnapshotFromProgress(0);
+  const [snapshot, setSnapshot] = useState<SceneSnapshot>(initialSnapshot);
+  const snapshotRef = useRef<SceneSnapshot>(initialSnapshot);
   const lenisRef = useRef<Lenis | null>(null);
 
   useEffect(() => {
@@ -32,8 +34,9 @@ export function useLenisSceneProgress(heroRef: RefObject<HTMLElement | null>) {
       const heroStart = hero.offsetTop;
       const heroDistance = Math.max(hero.offsetHeight - window.innerHeight, 1);
       const nextProgress = clamp((scroll - heroStart) / heroDistance);
-      progressRef.current = nextProgress;
-      setProgress(nextProgress);
+      const nextSnapshot = sceneSnapshotFromProgress(nextProgress);
+      snapshotRef.current = nextSnapshot;
+      setSnapshot(nextSnapshot);
     };
     lenis.on("scroll", updateScene);
     updateScene({ scroll: window.scrollY });
@@ -50,5 +53,6 @@ export function useLenisSceneProgress(heroRef: RefObject<HTMLElement | null>) {
     lenisRef.current?.scrollTo(target, { offset: -24 });
   }, []);
 
-  return { progress, progressRef, scrollTo };
+  return { snapshot, snapshotRef, scrollTo };
 }
+
