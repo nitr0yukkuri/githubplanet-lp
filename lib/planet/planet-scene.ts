@@ -1,17 +1,9 @@
 import * as THREE from "three";
 import { calculateGoWindSpeedFactor } from "./githubplanet-modules/go-planet-wind.js";
-import { languageProfiles, type LanguageProfile } from "./language-registry";
-import { languageWindowFromProgress } from "./language-timeline";
-import {
-  createPlanetVariant,
-  setAfterglowOpacity,
-  setVariantOpacity,
-  updatePlanetVariant,
-  type PlanetVariant,
-} from "./planet-variant";
+import type { LanguageProfile } from "./language-catalog";
 import { seeded, TAU } from "./planet-random";
-
-type ProgressRef = { current: number };
+import { createPlanetVariantStore } from "./planet-variant-store";
+import type { SceneSnapshotRef } from "./scene-snapshot";
 
 const SHOWCASE_WEEKLY_COMMITS = 24;
 const BASE_ROTATION_PER_SECOND = 0.06;
@@ -55,11 +47,11 @@ function createMeteor(color: THREE.Color, start: THREE.Vector3, end: THREE.Vecto
 
 export function createPlanetScene({
   container,
-  progressRef,
+  snapshotRef,
   reducedMotion,
 }: {
   container: HTMLElement;
-  progressRef: ProgressRef;
+  snapshotRef: SceneSnapshotRef;
   reducedMotion: boolean;
 }) {
   let renderer: THREE.WebGLRenderer;
@@ -104,18 +96,8 @@ export function createPlanetScene({
   const texture = new THREE.TextureLoader().load("/2k_mars.jpg");
   texture.colorSpace = THREE.SRGBColorSpace;
   texture.anisotropy = renderer.capabilities.getMaxAnisotropy();
-  const variants = new Map<string, PlanetVariant>();
-  const getVariant = (profile: LanguageProfile) => {
-    const existing = variants.get(profile.effect);
-    if (existing) return existing;
-    const created = createPlanetVariant(profile, texture, pixelRatio);
-    variants.set(profile.effect, created);
-    planetGroup.add(created.group);
-    return created;
-  };
-
-  const first = getVariant(languageProfiles[0]);
-  setVariantOpacity(first, 1);
+  const variantStore = createPlanetVariantStore({ parent: planetGroup, texture, pixelRatio });
+  variantStore.get(snapshotRef.current.language.from);
   const backgroundStars = createBackgroundStars();
   scene.add(backgroundStars);
 
@@ -148,38 +130,14 @@ export function createPlanetScene({
   const animate = () => {
     const delta = Math.min(clock.getDelta(), 0.05);
     elapsedSinceStart += delta;
-    const progress = progressRef.current;
-    const windowState = languageWindowFromProgress(progress);
-    const from = getVariant(windowState.from);
-    const to = getVariant(windowState.to);
-    const blend = THREE.MathUtils.smoothstep(windowState.blend, 0, 1);
-    if (from === to) {
-      setVariantOpacity(from, 1);
-    } else {
-      setVariantOpacity(from, 1 - blend);
-      setVariantOpacity(to, blend);
-    }
-    const afterglowEffect = windowState.afterglowIndex >= 0
-      ? languageProfiles[windowState.afterglowIndex].effect
-      : null;
-    variants.forEach((variant) => {
-      const isActive = variant === from || variant === to || variant.profile.effect === afterglowEffect;
-      if (!isActive && (variant.group.visible || variant.effectGroup.visible)) {
-        setVariantOpacity(variant, 0);
-      }
-    });
-    if (windowState.afterglowIndex >= 0) {
-      const afterglow = getVariant(languageProfiles[windowState.afterglowIndex]);
-      setAfterglowOpacity(afterglow, windowState.afterglow);
-    }
-
-    const bodySpeed = (BASE_ROTATION_PER_SECOND + SHOWCASE_WEEKLY_COMMITS * 0.006) * (windowState.from.effect === "vue" ? 0.7 : 1);
+    const snapshot = snapshotRef.current;
+    const bodySpeed = (BASE_ROTATION_PER_SECOND + SHOWCASE_WEEKLY_COMMITS * 0.006) * (snapshot.language.from.effect === "vue" ? 0.7 : 1);
     const windSpeed = calculateGoWindSpeedFactor(bodySpeed / 60, 0.001);
-    updatePlanetVariant(from, performance.now(), windSpeed, camera);
-    if (to !== from) updatePlanetVariant(to, performance.now(), windSpeed, camera);
+    const now = performance.now();
+    variantStore.update(snapshot, now, windSpeed, camera);
 
     if (elapsedSinceStart > nextMeteorAt) {
-      spawnMeteor(windowState.from);
+      spawnMeteor(snapshot.language.from);
       nextMeteorAt += 4.8;
     }
 
@@ -217,6 +175,7 @@ export function createPlanetScene({
   return () => {
     cancelAnimationFrame(animationFrame);
     window.removeEventListener("resize", resize);
+    variantStore.dispose();
     renderer.dispose();
     scene.traverse((object) => {
       const disposable = object as THREE.Mesh | THREE.Points;
@@ -231,3 +190,4 @@ export function createPlanetScene({
     renderer.domElement.remove();
   };
 }
+
