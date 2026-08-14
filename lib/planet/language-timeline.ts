@@ -9,6 +9,7 @@ export const FINAL_LANGUAGE_SEGMENT_RATIO = 0.6;
 export const LANGUAGE_TIMELINE_LENGTH = languageProfiles.length - 1 + FINAL_LANGUAGE_SEGMENT_RATIO;
 
 const clampProgress = (progress: number) => Math.min(1, Math.max(0, progress));
+const smoothstep = (value: number) => value * value * (3 - 2 * value);
 
 export function languageIndexFromProgress(progress: number): LanguageIndex {
   return languageWindowFromProgress(progress).displayIndex;
@@ -25,6 +26,7 @@ export type LanguageWindow = {
   fromIndex: number;
   toIndex: number;
   blend: number;
+  visualBlend: number;
   localProgress: number;
   isHolding: boolean;
   displayIndex: number;
@@ -41,6 +43,7 @@ export function languageWindowFromProgress(progress: number): LanguageWindow {
   const transitionProgress = isFinalLanguage
     ? 0
     : Math.min(1, Math.max(0, (localProgress - LANGUAGE_HOLD_RATIO) / LANGUAGE_TRANSITION_RATIO));
+  const visualBlend = isFinalLanguage ? 1 : smoothstep(transitionProgress);
   const afterglowIndex = fromIndex > 0 ? fromIndex - 1 : -1;
   const afterglowProfile = afterglowIndex >= 0 ? languageProfiles[afterglowIndex] : null;
   const afterglow = afterglowProfile && localProgress < afterglowProfile.afterglow
@@ -54,9 +57,10 @@ export function languageWindowFromProgress(progress: number): LanguageWindow {
     fromIndex,
     toIndex,
     blend: transitionProgress,
+    visualBlend,
     localProgress,
-    isHolding: isFinalLanguage || transitionProgress === 0,
-    displayIndex: transitionProgress >= LANGUAGE_DISPLAY_SWITCH_RATIO ? toIndex : fromIndex,
+    isHolding: isFinalLanguage || visualBlend === 0,
+    displayIndex: visualBlend >= LANGUAGE_DISPLAY_SWITCH_RATIO ? toIndex : fromIndex,
     afterglowIndex,
     afterglow,
   };
