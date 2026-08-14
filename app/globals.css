@@ -77,7 +77,7 @@ button { font: inherit; }
 .language-readout-main div span { margin-top: 5px; color: var(--language-color); font-size: 8px; letter-spacing: .13em; }
 .language-readout p { max-width: 190px; margin: 14px 0 17px; color: var(--muted); font-size: 10px; line-height: 1.7; }
 .language-progress { height: 1px; background: rgba(220,225,232,.14); }
-.language-progress span { display: block; height: 1px; background: var(--language-color); box-shadow: 0 0 10px var(--language-color); transition: width .25s linear, background .35s ease; }
+.language-progress span { display: block; height: 1px; background: var(--language-color); box-shadow: 0 0 10px var(--language-color); transition: width .25s linear; }
 .hero-title-group { position: absolute; z-index: 5; left: 32px; bottom: 10%; width: min(360px, 34vw); text-align: left; opacity: max(0, calc(1 - var(--scene-progress) * 2.4)); transform: translateY(calc(var(--scene-progress) * -8vh)); transition: transform .1s linear, opacity .25s ease; }
 .hero-kicker { margin: 0 0 20px; color: rgba(198,201,203,.78); font-size: 9px; letter-spacing: .18em; line-height: 1.6; }
 h1, h2, h3, p { margin-top: 0; }
