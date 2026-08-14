@@ -1,16 +1,14 @@
 "use client";
 
-import type { CSSProperties } from "react";
 import { useEffect, useRef } from "react";
 import { createPlanetScene } from "../../lib/planet/planet-scene";
 import type { SceneSnapshotRef } from "../../lib/planet/scene-snapshot";
 
 type PlanetStageProps = {
   snapshotRef: SceneSnapshotRef;
-  planetColor: string;
 };
 
-export function PlanetStage({ snapshotRef, planetColor }: PlanetStageProps) {
+export function PlanetStage({ snapshotRef }: PlanetStageProps) {
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -20,10 +18,6 @@ export function PlanetStage({ snapshotRef, planetColor }: PlanetStageProps) {
     return createPlanetScene({ container, snapshotRef, reducedMotion });
   }, [snapshotRef]);
 
-  return (
-    <div ref={containerRef} className="planet-canvas" aria-hidden="true">
-      <div className="planet-fallback" style={{ "--planet-color": planetColor } as CSSProperties} />
-    </div>
-  );
+  return <div ref={containerRef} className="planet-canvas" aria-hidden="true" />;
 }
 
