@@ -59,6 +59,7 @@ test("keeps the source-faithful renderer and smooth-scroll implementation wired"
   assert.match(experience, /FinalCtaSection/);
   assert.doesNotMatch(page, /new THREE\.WebGLRenderer|new Lenis|createMeteor/);
   assert.match(hero, /PlanetStage/);
+  assert.match(hero, /planetColor/);
   assert.match(hero, /LanguageReadout/);
   assert.match(header, /progress \* 100/);
   for (const language of ["TypeScript", "JavaScript", "Rust", "Go", "CSS", "C++", "Java", "Vue", "Ruby", "Kotlin"]) {
@@ -101,6 +102,7 @@ test("keeps the source-faithful renderer and smooth-scroll implementation wired"
   assert.match(scroll, /prefers-reduced-motion/);
   assert.match(planetStage, /snapshotRef/);
   assert.match(planetStage, /planet-fallback/);
+  assert.match(planetStage, /--planet-color/);
   assert.match(readout, /snapshot/);
   assert.match(readout, /--language-color/);
   assert.match(readout, /visualBlend/);
