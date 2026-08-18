@@ -15,6 +15,8 @@ https://githubplanet-orbit.itlogin0606.chatgpt.site
 - CSS、C++、Go、TypeScript、JavaScript、Java、Kotlin、Rust、Vue、Rubyの言語ロゴと固有エフェクト
 - 言語切替時の短い残光、惑星に追従する星、独立して横切るメテオ
 - `prefers-reduced-motion` に対応した静止表示
+- 最後の言語惑星から宇宙空間へ抜ける3Dフライトと、GitHubPlanetホームへの到着CTA
+- 到着CTAはLP内でOAuthを実装せず、元GitHubPlanetの`/login`へ引き渡す
 
 惑星のズームは行いません。カメラ距離、惑星倍率、中心位置を固定し、惑星の自転とテクスチャの立体感を主役にしています。
 
@@ -27,7 +29,7 @@ languageWindowFromProgress()
   ↓
 sceneSnapshotFromProgress()
   ↓
-Reactの言語表示 / Three.jsのplanet variant runtime
+Reactの言語表示 / Three.jsのplanet variant runtime / 最終フライト
 ```
 
 `languageWindowFromProgress()` がスクロールから言語の保持・遷移・表示切替・残光を決める唯一の遷移ソースです。同じ `SceneSnapshot` をUIとThree.jsで共有するため、ロゴ・文面・惑星エフェクトの切替タイミングがずれません。
@@ -36,7 +38,7 @@ Reactの言語表示 / Three.jsのplanet variant runtime
 
 - `app/page.tsx` — ルートの入口だけを担当
 - `components/landing/HeroExperience.client.tsx` — Lenis、共有スナップショット、LP全体のクライアント構成
-- `components/landing/*` — Header、Hero、Story、Signals、Process、CTA、Footerの表示責務
+- `components/landing/*` — Header、Hero、最終フライトCTA、Footerの表示責務
 - `lib/planet/language-catalog.ts` — 言語プロフィールとロゴのカタログ
 - `lib/planet/language-timeline.ts` — 進捗から言語遷移を計算する純粋なルール
 - `lib/planet/scene-snapshot.ts` — UIとThree.jsが共有する表示状態
@@ -44,6 +46,10 @@ Reactの言語表示 / Three.jsのplanet variant runtime
 - `lib/planet/planet-variant-store.ts` — variantの生成、切替、ライフサイクル管理
 - `lib/planet/planet-scene.ts` — Three.jsのカメラ、背景、惑星グループ、自転、メテオ、cleanup
 - `lib/scroll/use-lenis-scene-progress.ts` — Lenisとスクロール進捗の同期
+
+最終導線は、同じ`SceneSnapshot`の`finalFlightProgress`を使います。言語の表示が終わった後、カメラと惑星グループを同時に奥行き方向へ移動し、CSSの星の多層パララックスと元Marsテクスチャの到着演出へ接続します。到着後の「星を誕生させる」は、元GitHubPlanetの認証入口である`/login`へ遷移します。LP側でGitHub OAuth URLやClient Secretを扱わないため、`state`、PKCE、callback、セッションは元アプリに集約されます。
+
+ローカルでは`http://localhost:3000/login`、公開環境では`https://githubplanet.dev/login`を使用します。元アプリのcallback設定は元リポジトリの環境設定に従います。
 
 マテリアルの透明度更新はキャッシュ済みマテリアルを使い、毎フレームの `needsUpdate = true` を避けています。フレーム時刻も1フレームにつき1回だけ取得します。
 
@@ -92,4 +98,3 @@ npm run lint
 ## License
 
 All rights reserved.
-
