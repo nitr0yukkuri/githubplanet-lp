@@ -18,6 +18,18 @@ export function PlanetStage({ snapshotRef }: PlanetStageProps) {
     return createPlanetScene({ container, snapshotRef, reducedMotion });
   }, [snapshotRef]);
 
-  return <div ref={containerRef} className="planet-canvas" aria-hidden="true" />;
+  return (
+    <div ref={containerRef} className="planet-canvas" aria-hidden="true">
+      <div className="planet-fallback" aria-hidden="true">
+        <div className="planet">
+          <div className="planet-glow" />
+          <div className="planet-land land-one" />
+          <div className="planet-land land-two" />
+          <div className="planet-land land-three" />
+          <div className="planet-crater crater-one" />
+          <div className="planet-crater crater-two" />
+        </div>
+      </div>
+    </div>
+  );
 }
-

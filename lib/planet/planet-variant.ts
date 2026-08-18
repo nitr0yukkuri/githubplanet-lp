@@ -337,4 +337,3 @@ export function updatePlanetVariant(variant: PlanetVariant, now: number, windSpe
   updateRubyPlanetSolar(variant.rubyMaterial, now);
   updateRubyPlanetSolar(variant.rubyCorona, now, camera);
 }
-

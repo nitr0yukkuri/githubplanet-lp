@@ -23,4 +23,3 @@ export const languageProfiles = [
   { label: "Vue", symbol: "V", logo: "/language-logos/vue.svg", color: "#41b883", family: "CIRCULATION", effect: "vue", afterglow: 0.07, tagline: "A gentle green current carries six orbiting leaves." },
   { label: "Ruby", symbol: "R", logo: "/language-logos/ruby.svg", color: "#cc342d", family: "SOLAR / PEARL", effect: "ruby", afterglow: 0.1, tagline: "An anodized red surface breathes heat and embers." },
 ] as const satisfies readonly LanguageProfile[];
-

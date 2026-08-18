@@ -68,4 +68,3 @@ export function createPlanetVariantStore({ parent, texture, pixelRatio }: Planet
     dispose: () => variants.clear(),
   };
 }
-

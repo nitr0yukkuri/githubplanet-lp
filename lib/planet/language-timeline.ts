@@ -65,4 +65,3 @@ export function languageWindowFromProgress(progress: number): LanguageWindow {
     afterglow,
   };
 }
-

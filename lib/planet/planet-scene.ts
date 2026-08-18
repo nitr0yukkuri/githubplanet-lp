@@ -100,6 +100,7 @@ export function createPlanetScene({
   variantStore.get(snapshotRef.current.language.from);
   const backgroundStars = createBackgroundStars();
   scene.add(backgroundStars);
+  const baseCameraZ = camera.position.z;
 
   const meteorGroup = new THREE.Group();
   scene.add(meteorGroup);
@@ -136,14 +137,22 @@ export function createPlanetScene({
     const now = performance.now();
     variantStore.update(snapshot, now, windSpeed, camera);
 
+    const flight = snapshot.finalFlightProgress;
+    const flightEase = 1 - Math.pow(1 - flight, 3);
+    planetGroup.scale.setScalar(1 - flightEase * 0.72);
+    planetGroup.position.z = -flightEase * 2.6;
+    camera.position.z = baseCameraZ - flightEase * 2.8;
+    camera.lookAt(0, 0, 0);
+    backgroundStars.scale.setScalar(1 + flightEase * 4.5);
+
     if (elapsedSinceStart > nextMeteorAt) {
       spawnMeteor(snapshot.activeLanguage);
       nextMeteorAt += 4.8;
     }
 
     if (!reducedMotion) {
-      planetGroup.rotation.z += delta * bodySpeed;
-      backgroundStars.rotation.y += delta * 0.0015;
+      planetGroup.rotation.z += delta * bodySpeed * (1 - flightEase * 0.62);
+      backgroundStars.rotation.y += delta * (0.0015 + flightEase * 0.035);
     }
 
     for (let index = meteors.length - 1; index >= 0; index -= 1) {
@@ -190,4 +199,3 @@ export function createPlanetScene({
     renderer.domElement.remove();
   };
 }
-

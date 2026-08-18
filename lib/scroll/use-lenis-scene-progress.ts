@@ -5,7 +5,10 @@ import { sceneSnapshotFromProgress, type SceneSnapshot } from "../planet/scene-s
 
 const clamp = (value: number, min = 0, max = 1) => Math.min(max, Math.max(min, value));
 
-export function useLenisSceneProgress(heroRef: RefObject<HTMLElement | null>) {
+export function useLenisSceneProgress(
+  heroRef: RefObject<HTMLElement | null>,
+  finalSectionRef: RefObject<HTMLElement | null>,
+) {
   const initialSnapshot = sceneSnapshotFromProgress(0);
   const [snapshot, setSnapshot] = useState<SceneSnapshot>(initialSnapshot);
   const snapshotRef = useRef<SceneSnapshot>(initialSnapshot);
@@ -34,7 +37,24 @@ export function useLenisSceneProgress(heroRef: RefObject<HTMLElement | null>) {
       const heroStart = hero.offsetTop;
       const heroDistance = Math.max(hero.offsetHeight - window.innerHeight, 1);
       const nextProgress = clamp((scroll - heroStart) / heroDistance);
-      const nextSnapshot = sceneSnapshotFromProgress(nextProgress);
+      const heroIsActive = scroll <= heroStart + heroDistance + 1;
+      const finalSection = finalSectionRef.current;
+      const flightStart = finalSection
+        ? finalSection.offsetTop - window.innerHeight * 0.72
+        : Number.POSITIVE_INFINITY;
+      const flightDistance = Math.max(window.innerHeight * 0.94, 1);
+      const finalFlightProgress = clamp((scroll - flightStart) / flightDistance);
+      const finalSectionEnd = finalSection
+        ? finalSection.offsetTop + finalSection.offsetHeight
+        : Number.NEGATIVE_INFINITY;
+      const finalFlightIsVisible = Boolean(finalSection)
+        && scroll >= flightStart
+        && scroll <= finalSectionEnd;
+      const nextSnapshot = sceneSnapshotFromProgress(
+        nextProgress,
+        finalFlightIsVisible ? finalFlightProgress : 0,
+        heroIsActive ? "language-worlds" : "content",
+      );
       snapshotRef.current = nextSnapshot;
       setSnapshot(nextSnapshot);
     };
@@ -46,7 +66,7 @@ export function useLenisSceneProgress(heroRef: RefObject<HTMLElement | null>) {
       lenis.destroy();
       lenisRef.current = null;
     };
-  }, [heroRef]);
+  }, [finalSectionRef, heroRef]);
 
   const scrollTo = useCallback((event: ReactMouseEvent<HTMLAnchorElement>, target: string) => {
     event.preventDefault();
@@ -55,4 +75,3 @@ export function useLenisSceneProgress(heroRef: RefObject<HTMLElement | null>) {
 
   return { snapshot, snapshotRef, scrollTo };
 }
-
