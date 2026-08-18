@@ -11,7 +11,7 @@ export function LandingHeader({ progress, scrollTo }: LandingHeaderProps) {
       <header className="fixed-chrome">
         <a className="brand" href="#top" onClick={(event) => scrollTo(event, "#top")} aria-label="GitHubPlanet home"><img className="brand-mark" src="/githubplanet-logo.png" alt="GitHubPlanet" /></a>
         <div className="chrome-center">GITHUB ACTIVITY / 3D PLANET</div>
-        <a className="chrome-link" href="#signals" onClick={(event) => scrollTo(event, "#signals")}>READ THE SIGNALS <span>→</span></a>
+        <span className="chrome-link">LANGUAGE WORLDS <span>↓</span></span>
       </header>
       <div className="progress-rail" aria-hidden="true"><span style={{ width: `${Math.max(4, progress * 100)}%` }} /></div>
     </>
