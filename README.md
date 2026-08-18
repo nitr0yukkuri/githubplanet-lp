@@ -8,6 +8,10 @@ GitHubPlanetの活動を、言語ごとの個性を持つ3D惑星として見せ
 
 https://githubplanet-orbit.itlogin0606.chatgpt.site
 
+## Production
+
+https://githubplanet-lp.vercel.app
+
 ## 現在の作品
 
 - Marsテクスチャとskyboxを使った、固定フレーミングの3D惑星
@@ -98,3 +102,4 @@ npm run lint
 ## License
 
 All rights reserved.
+
