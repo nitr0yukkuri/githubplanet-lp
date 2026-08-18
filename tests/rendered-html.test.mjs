@@ -23,9 +23,8 @@ test("server-renders the GitHubPlanet landing page shell", async () => {
   assert.match(html, /class="planet-canvas"/);
   assert.match(html, /YOUR CODE,/);
   assert.match(html, /IN ORBIT\./);
-  assert.match(html, /id="story"/);
-  assert.match(html, /id="signals"/);
-  assert.match(html, /id="process"/);
+  assert.match(html, /id="start"/);
+  assert.doesNotMatch(html, /FROM ACTIVITY TO ATMOSPHERE|ACTIVITY, MADE VISIBLE|ONE CONNECTION \/ THREE MOVEMENTS/);
   assert.doesNotMatch(html, /Your site is taking shape|react-loading-skeleton|Codex/);
 });
 
@@ -53,12 +52,10 @@ test("keeps the source-faithful renderer and smooth-scroll implementation wired"
   assert.doesNotMatch(page, /useLenisSceneProgress|useRef|LandingHeader|HeroSection/);
   assert.match(experience, /useLenisSceneProgress/);
   assert.match(experience, /LandingHeader/);
-  assert.match(experience, /StorySection/);
-  assert.match(experience, /SignalsSection/);
-  assert.match(experience, /ProcessSection/);
+  assert.doesNotMatch(experience, /StorySection|SignalsSection|ProcessSection/);
   assert.match(experience, /FinalCtaSection/);
   assert.doesNotMatch(page, /new THREE\.WebGLRenderer|new Lenis|createMeteor/);
-  assert.match(hero, /PlanetStage/);
+  assert.doesNotMatch(hero, /PlanetStage/);
   assert.match(hero, /LanguageReadout/);
   assert.match(header, /progress \* 100/);
   for (const language of ["TypeScript", "JavaScript", "Rust", "Go", "CSS", "C++", "Java", "Vue", "Ruby", "Kotlin"]) {
@@ -77,6 +74,15 @@ test("keeps the source-faithful renderer and smooth-scroll implementation wired"
   assert.match(timeline, /displayIndex/);
   assert.match(snapshot, /languageWindowFromProgress/);
   assert.match(snapshot, /activeLanguage/);
+  assert.match(snapshot, /finalFlightProgress/);
+  assert.match(snapshot, /phase/);
+  assert.match(experience, /PlanetStage/);
+  assert.match(experience, /finalSectionRef/);
+  assert.match(experience, /data-scene-phase/);
+  const finalCta = await readFile(new URL("../components/landing/FinalCtaSection.tsx", import.meta.url), "utf8");
+  assert.match(finalCta, /space-bridge/);
+  assert.match(finalCta, /githubplanet\.dev\/login/);
+  assert.match(finalCta, /星を誕生させる/);
   assert.match(scene, /new THREE\.WebGLRenderer/);
   assert.match(scene, /planetGroup\.rotation\.z/);
   assert.match(scene, /createMeteor/);
@@ -85,6 +91,7 @@ test("keeps the source-faithful renderer and smooth-scroll implementation wired"
   assert.doesNotMatch(scene, /languageWindowFromProgress|createPlanetVariant\(|setAfterglowOpacity/);
   assert.equal((scene.match(/performance\.now\(\)/g) ?? []).length, 1);
   assert.match(variantStore, /language\.from/);
+  assert.match(variantStore, /language\.to/);
   assert.match(variantStore, /language\.visualBlend/);
   assert.match(variantStore, /createPlanetVariant/);
   assert.match(variant, /createRayStarMaterial/);
@@ -100,9 +107,14 @@ test("keeps the source-faithful renderer and smooth-scroll implementation wired"
   assert.match(scroll, /new Lenis/);
   assert.match(scroll, /prefers-reduced-motion/);
   assert.match(planetStage, /snapshotRef/);
+  assert.match(planetStage, /planet-fallback/);
+  assert.match(planetStage, /className="planet"/);
   assert.match(readout, /snapshot/);
   assert.match(readout, /--language-color/);
-  assert.match(readout, /visualBlend/);
+  assert.match(readout, /languageWindow\.from/);
+  assert.match(readout, /languageWindow\.to/);
+  assert.match(readout, /languageWindow\.localProgress/);
+  assert.match(css, /\.language-readout-transition/);
   assert.match(css, /\.hero-stage\s*\{[^}]*position:\s*sticky/s);
   assert.match(css, /\.planet-canvas\s*\{/);
   assert.match(css, /overflow:\s*clip/);
@@ -117,4 +129,3 @@ test("keeps the source-faithful renderer and smooth-scroll implementation wired"
     await access(new URL(`../public/skybox/${file}`, import.meta.url));
   }
 });
-

@@ -52,6 +52,7 @@ test("language timeline holds, transitions, and clamps at its boundaries", async
   const transitionMidpoint = languageWindowFromProgress(0.86 / LANGUAGE_TIMELINE_LENGTH);
   assert.equal(transitionMidpoint.fromIndex, 0);
   assert.equal(transitionMidpoint.displayIndex, 1);
+  assert.equal(transitionMidpoint.blend, 0.5);
   assert.equal(transitionMidpoint.visualBlend, 0.5);
   assert.equal(transitionMidpoint.isHolding, false);
 
@@ -81,5 +82,12 @@ test("scene snapshot exposes one shared language decision", async () => {
   assert.equal(current.language.displayIndex, current.activeLanguage === current.language.from
     ? current.language.fromIndex
     : current.language.toIndex);
+  assert.equal(current.finalFlightProgress, 0);
+  assert.equal(current.phase, "language-worlds");
 });
 
+test("scene snapshot exposes the final handoff phases", async () => {
+  const { snapshot } = await loadTimelineModules();
+  assert.equal(snapshot.sceneSnapshotFromProgress(1, 0.4, "content").phase, "final-flight");
+  assert.equal(snapshot.sceneSnapshotFromProgress(1, 0.9, "content").phase, "arrival");
+});
