@@ -12,7 +12,7 @@ import { PlanetStage } from "../planet/PlanetStage";
 export function HeroExperience() {
   const heroRef = useRef<HTMLElement | null>(null);
   const finalSectionRef = useRef<HTMLElement | null>(null);
-  const { snapshot, snapshotRef, scrollTo } = useLenisSceneProgress(heroRef, finalSectionRef);
+  const { snapshot, snapshotRef, scrollTo, startAutoPilot } = useLenisSceneProgress(heroRef, finalSectionRef);
   const pageStyle = {
     "--scene-progress": snapshot.progress,
     "--final-flight-progress": snapshot.finalFlightProgress,
@@ -26,9 +26,10 @@ export function HeroExperience() {
       <div className="global-planet-scene" aria-hidden="true">
         <PlanetStage snapshotRef={snapshotRef} />
       </div>
-      <HeroSection heroRef={heroRef} snapshot={snapshot} scrollTo={scrollTo} />
+      <HeroSection heroRef={heroRef} snapshot={snapshot} startAutoPilot={startAutoPilot} />
       <FinalCtaSection sectionRef={finalSectionRef} snapshot={snapshot} />
       <SiteFooter scrollTo={scrollTo} />
     </main>
   );
 }
+
