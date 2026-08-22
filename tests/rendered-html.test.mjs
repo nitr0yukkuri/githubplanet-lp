@@ -29,7 +29,7 @@ test("server-renders the GitHubPlanet landing page shell", async () => {
 });
 
 test("keeps the source-faithful renderer and smooth-scroll implementation wired", async () => {
-  const [page, experience, hero, header, css, packageJson, catalog, timeline, snapshot, scene, variantStore, variant, scroll, planetStage, readout, readme] = await Promise.all([
+  const [page, experience, hero, header, css, packageJson, catalog, timeline, snapshot, scene, spaceEnvironment, variantStore, variant, scroll, planetStage, readout, readme] = await Promise.all([
     readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
     readFile(new URL("../components/landing/HeroExperience.client.tsx", import.meta.url), "utf8"),
     readFile(new URL("../components/landing/HeroSection.tsx", import.meta.url), "utf8"),
@@ -40,6 +40,7 @@ test("keeps the source-faithful renderer and smooth-scroll implementation wired"
     readFile(new URL("../lib/planet/language-timeline.ts", import.meta.url), "utf8"),
     readFile(new URL("../lib/planet/scene-snapshot.ts", import.meta.url), "utf8"),
     readFile(new URL("../lib/planet/planet-scene.ts", import.meta.url), "utf8"),
+    readFile(new URL("../lib/planet/space-environment.ts", import.meta.url), "utf8"),
     readFile(new URL("../lib/planet/planet-variant-store.ts", import.meta.url), "utf8"),
     readFile(new URL("../lib/planet/planet-variant.ts", import.meta.url), "utf8"),
     readFile(new URL("../lib/scroll/use-lenis-scene-progress.ts", import.meta.url), "utf8"),
@@ -57,6 +58,12 @@ test("keeps the source-faithful renderer and smooth-scroll implementation wired"
   assert.doesNotMatch(page, /new THREE\.WebGLRenderer|new Lenis|createMeteor/);
   assert.doesNotMatch(hero, /PlanetStage/);
   assert.match(hero, /LanguageReadout/);
+  assert.match(hero, /startAutoPilot/);
+  assert.match(hero, /Start automatic language world flight/);
+  assert.match(scroll, /AUTO_NAVIGATION_DURATION = 42/);
+  assert.match(scroll, /source: "auto-pilot"/);
+  assert.match(hero, /href="https:\/\/githubplanet\.dev\/login"/);
+  assert.doesNotMatch(hero, /wired-button[^>]*href="#start"/);
   assert.match(header, /progress \* 100/);
   for (const language of ["TypeScript", "JavaScript", "Rust", "Go", "CSS", "C++", "Java", "Vue", "Ruby", "Kotlin"]) {
     assert.match(catalog, new RegExp(language.replace("+", "\\+")));
@@ -82,12 +89,20 @@ test("keeps the source-faithful renderer and smooth-scroll implementation wired"
   const finalCta = await readFile(new URL("../components/landing/FinalCtaSection.tsx", import.meta.url), "utf8");
   assert.match(finalCta, /space-bridge/);
   assert.match(finalCta, /githubplanet\.dev\/login/);
+  assert.match(finalCta, /href="https:\/\/githubplanet\.dev\/login"/);
   assert.match(finalCta, /星を誕生させる/);
   assert.match(scene, /new THREE\.WebGLRenderer/);
   assert.match(scene, /planetGroup\.rotation\.z/);
   assert.match(scene, /createMeteor/);
   assert.match(scene, /spawnMeteor\(snapshot\.activeLanguage\)/);
+  assert.match(scene, /webglcontextlost/);
+  assert.match(scene, /spaceEnvironment\?\.update/);
+  assert.match(scene, /spaceEnvironment\?\.dispose/);
   assert.match(scene, /createPlanetVariantStore/);
+  assert.match(spaceEnvironment, /COMET_PLUME_VERTEX_SHADER/);
+  assert.match(spaceEnvironment, /single-comet-dust-plume/);
+  assert.match(spaceEnvironment, /single-comet-ion-plume/);
+  assert.match(spaceEnvironment, /single-comet-coma/);
   assert.doesNotMatch(scene, /languageWindowFromProgress|createPlanetVariant\(|setAfterglowOpacity/);
   assert.equal((scene.match(/performance\.now\(\)/g) ?? []).length, 1);
   assert.match(variantStore, /language\.from/);
@@ -105,11 +120,15 @@ test("keeps the source-faithful renderer and smooth-scroll implementation wired"
     assert.match(variant, new RegExp(effect));
   }
   assert.match(scroll, /new Lenis/);
+  assert.match(scroll, /scheduleSnapshotPublish/);
   assert.match(scroll, /prefers-reduced-motion/);
   assert.match(planetStage, /snapshotRef/);
+  assert.match(planetStage, /import\("\.\.\/\.\.\/lib\/planet\/planet-scene"/);
   assert.match(planetStage, /planet-fallback/);
   assert.match(planetStage, /className="planet"/);
   assert.match(readout, /snapshot/);
+  assert.match(readout, /visually-hidden/);
+  assert.match(readout, /aria-live="polite"/);
   assert.match(readout, /--language-color/);
   assert.match(readout, /languageWindow\.from/);
   assert.match(readout, /languageWindow\.to/);
@@ -117,7 +136,10 @@ test("keeps the source-faithful renderer and smooth-scroll implementation wired"
   assert.match(css, /\.language-readout-transition/);
   assert.match(css, /\.hero-stage\s*\{[^}]*position:\s*sticky/s);
   assert.match(css, /\.planet-canvas\s*\{/);
+  assert.match(css, /\.planet-canvas\.is-loading.*planet-fallback/);
   assert.match(css, /overflow:\s*clip/);
+  assert.match(spaceEnvironment, /prepareGeometryBounds/);
+  assert.doesNotMatch(spaceEnvironment, /frustumCulled\s*=\s*false/);
   assert.match(packageJson, /"three":\s*"\^?0\.160\.0"/);
   assert.match(packageJson, /"lenis":/);
   assert.match(packageJson, /"@types\/three":/);
@@ -129,3 +151,4 @@ test("keeps the source-faithful renderer and smooth-scroll implementation wired"
     await access(new URL(`../public/skybox/${file}`, import.meta.url));
   }
 });
+
