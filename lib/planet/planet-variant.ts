@@ -313,8 +313,10 @@ export function createPlanetVariant(profile: LanguageProfile, texture: THREE.Tex
     effectGroup.add(rubyCorona);
   }
 
+  const aura = createAura(profile.color, PLANET_RADIUS);
+  if (effect === "kotlin") aura.material.toneMapped = false;
   afterglowGroup.add(createStars(pixelRatio, PLANET_RADIUS));
-  afterglowGroup.add(createAura(profile.color, PLANET_RADIUS));
+  afterglowGroup.add(aura);
   variant.materials = collectMaterials(group);
   variant.afterglowMaterials = collectMaterials(afterglowGroup);
   setVariantOpacity(variant, 0);
