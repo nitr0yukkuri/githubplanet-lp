@@ -60,11 +60,12 @@ test("keeps the source-faithful renderer and smooth-scroll implementation wired"
   assert.match(hero, /LanguageReadout/);
   assert.match(hero, /startAutoPilot/);
   assert.match(hero, /Start automatic language world flight/);
-  assert.match(scroll, /AUTO_NAVIGATION_DURATION = 42/);
+  assert.match(scroll, /AUTO_NAVIGATION_DURATION = 60/);
   assert.match(scroll, /source: "auto-pilot"/);
   assert.match(hero, /href="https:\/\/githubplanet\.dev\/login"/);
   assert.doesNotMatch(hero, /wired-button[^>]*href="#start"/);
-  assert.match(header, /progress \* 100/);
+  assert.doesNotMatch(header, /progress-rail|progress \* 100/);
+  assert.doesNotMatch(css, /progress-rail/);
   for (const language of ["TypeScript", "JavaScript", "Rust", "Go", "CSS", "C++", "Java", "Vue", "Ruby", "Kotlin"]) {
     assert.match(catalog, new RegExp(language.replace("+", "\\+")));
   }
@@ -137,7 +138,7 @@ test("keeps the source-faithful renderer and smooth-scroll implementation wired"
   assert.match(css, /\.language-readout-transition/);
   assert.match(css, /\.hero-stage\s*\{[^}]*position:\s*sticky/s);
   assert.match(css, /\.planet-canvas\s*\{/);
-  assert.match(css, /\.planet-canvas\.is-loading.*planet-fallback/);
+  assert.match(css, /\.planet-canvas\.is-unavailable.*planet-fallback/);
   assert.match(css, /overflow:\s*clip/);
   assert.match(spaceEnvironment, /prepareGeometryBounds/);
   assert.doesNotMatch(spaceEnvironment, /frustumCulled\s*=\s*false/);
@@ -152,4 +153,3 @@ test("keeps the source-faithful renderer and smooth-scroll implementation wired"
     await access(new URL(`../public/skybox/${file}`, import.meta.url));
   }
 });
-
