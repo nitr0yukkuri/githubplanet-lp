@@ -5,7 +5,7 @@ import { sceneSnapshotFromProgress, type SceneSnapshot } from "../planet/scene-s
 
 const clamp = (value: number, min = 0, max = 1) => Math.min(max, Math.max(min, value));
 const SPACE_TRANSIT_VIEWPORTS = 7.2;
-const AUTO_NAVIGATION_DURATION = 42;
+const AUTO_NAVIGATION_DURATION = 60;
 
 export function useLenisSceneProgress(
   heroRef: RefObject<HTMLElement | null>,
@@ -132,4 +132,3 @@ export function useLenisSceneProgress(
 
   return { snapshot, snapshotRef, scrollTo, startAutoPilot };
 }
-
