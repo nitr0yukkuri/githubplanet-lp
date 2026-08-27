@@ -22,7 +22,7 @@ export function HeroExperience() {
     <main className="site-shell" data-scene-phase={snapshot.phase} style={pageStyle}>
       <div className="star-field" aria-hidden="true" />
       <div className="grain" aria-hidden="true" />
-      <LandingHeader scrollTo={scrollTo} progress={snapshot.progress} />
+      <LandingHeader scrollTo={scrollTo} />
       <div className="global-planet-scene" aria-hidden="true">
         <PlanetStage snapshotRef={snapshotRef} />
       </div>
@@ -32,4 +32,3 @@ export function HeroExperience() {
     </main>
   );
 }
-
