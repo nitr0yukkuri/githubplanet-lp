@@ -112,7 +112,8 @@ test("keeps the source-faithful renderer and smooth-scroll implementation wired"
   assert.match(variant, /createRayStarMaterial/);
   assert.match(variant, /afterglowGroup/);
   assert.match(variant, /effectGroup\.add\(typeScriptShell\)/);
-  assert.match(variant, /afterglowGroup\.add\(createAura/);
+  assert.match(variant, /const aura = createAura/);
+  assert.match(variant, /effect === "kotlin"\) aura\.material\.toneMapped = false/);
   assert.match(variant, /materialProgramChanged/);
   await assert.rejects(() => access(new URL("../lib/planet/language-effects.ts", import.meta.url)));
   await assert.rejects(() => access(new URL("../lib/planet/language-registry.ts", import.meta.url)));
