@@ -76,6 +76,26 @@ export function createPlanetScene({
   renderer.domElement.setAttribute("aria-hidden", "true");
   container.appendChild(renderer.domElement);
 
+  let contextAvailable = true;
+  let planetAssetAvailable = true;
+  let pageVisible = document.visibilityState !== "hidden";
+  const handleVisibilityChange = () => {
+    pageVisible = document.visibilityState !== "hidden";
+  };
+  const handleContextLost = (event: Event) => {
+    event.preventDefault();
+    contextAvailable = false;
+    container.classList.add("is-unavailable");
+  };
+  const handleContextRestored = () => {
+    contextAvailable = true;
+    if (planetAssetAvailable) {
+      container.classList.remove("is-unavailable");
+    }
+    resize();
+  };
+  document.addEventListener("visibilitychange", handleVisibilityChange);
+
   const ambient = new THREE.AmbientLight(0x888888, 1.35);
   const key = new THREE.DirectionalLight(0xffffff, 2.3);
   key.position.set(10, 5, 9);
@@ -85,6 +105,11 @@ export function createPlanetScene({
 
   const skybox = new THREE.CubeTextureLoader().setPath("/skybox/").load(
     ["right.webp", "left.webp", "top.webp", "bottom.webp", "front.webp", "back.webp"],
+    undefined,
+    undefined,
+    () => {
+      scene.background = null;
+    },
   );
   scene.background = skybox;
 
@@ -93,7 +118,15 @@ export function createPlanetScene({
   planetGroup.rotation.y = Math.PI * 0.1;
   scene.add(planetGroup);
 
-  const texture = new THREE.TextureLoader().load("/2k_mars.jpg");
+  const texture = new THREE.TextureLoader().load(
+    "/2k_mars.jpg",
+    undefined,
+    undefined,
+    () => {
+      planetAssetAvailable = false;
+      container.classList.add("is-unavailable");
+    },
+  );
   texture.colorSpace = THREE.SRGBColorSpace;
   texture.anisotropy = renderer.capabilities.getMaxAnisotropy();
   const variantStore = createPlanetVariantStore({ parent: planetGroup, texture, pixelRatio });
@@ -125,65 +158,75 @@ export function createPlanetScene({
   };
   resize();
   window.addEventListener("resize", resize);
+  renderer.domElement.addEventListener("webglcontextlost", handleContextLost, false);
+  renderer.domElement.addEventListener("webglcontextrestored", handleContextRestored, false);
 
   const clock = new THREE.Clock();
   let animationFrame = 0;
   const animate = () => {
     const delta = Math.min(clock.getDelta(), 0.05);
-    elapsedSinceStart += delta;
     const snapshot = snapshotRef.current;
-    const bodySpeed = (BASE_ROTATION_PER_SECOND + SHOWCASE_WEEKLY_COMMITS * 0.006) * (snapshot.language.from.effect === "vue" ? 0.7 : 1);
-    const windSpeed = calculateGoWindSpeedFactor(bodySpeed / 60, 0.001);
-    const now = performance.now();
-    variantStore.update(snapshot, now, windSpeed, camera);
+    const canRender = pageVisible && contextAvailable && snapshot.phase !== "content";
 
-    const flight = snapshot.finalFlightProgress;
-    const flightEase = 1 - Math.pow(1 - flight, 3);
-    planetGroup.scale.setScalar(1 - flightEase * 0.72);
-    planetGroup.position.z = -flightEase * 2.6;
-    camera.position.z = baseCameraZ - flightEase * 2.8;
-    camera.lookAt(0, 0, 0);
-    backgroundStars.scale.setScalar(1 + flightEase * 4.5);
+    if (canRender) {
+      elapsedSinceStart += delta;
+      const bodySpeed = (BASE_ROTATION_PER_SECOND + SHOWCASE_WEEKLY_COMMITS * 0.006) * (snapshot.language.from.effect === "vue" ? 0.7 : 1);
+      const windSpeed = calculateGoWindSpeedFactor(bodySpeed / 60, 0.001);
+      const now = performance.now();
+      variantStore.update(snapshot, now, windSpeed, camera);
 
-    if (elapsedSinceStart > nextMeteorAt) {
-      spawnMeteor(snapshot.activeLanguage);
-      nextMeteorAt += 4.8;
-    }
+      const flight = snapshot.finalFlightProgress;
+      const flightEase = 1 - Math.pow(1 - flight, 3);
+      planetGroup.scale.setScalar(1 - flightEase * 0.72);
+      planetGroup.position.z = -flightEase * 2.6;
+      camera.position.z = baseCameraZ - flightEase * 2.8;
+      camera.lookAt(0, 0, 0);
+      backgroundStars.scale.setScalar(1 + flightEase * 4.5);
 
-    if (!reducedMotion) {
-      planetGroup.rotation.z += delta * bodySpeed * (1 - flightEase * 0.62);
-      backgroundStars.rotation.y += delta * (0.0015 + flightEase * 0.035);
-    }
-
-    for (let index = meteors.length - 1; index >= 0; index -= 1) {
-      const meteor = meteors[index];
-      meteor.elapsed += delta;
-      const amount = Math.min(1, Math.max(0, meteor.elapsed / meteor.duration));
-      const eased = 1 - Math.pow(1 - amount, 3);
-      meteor.group.position.lerpVectors(meteor.start, meteor.end, eased);
-      meteor.group.scale.setScalar(amount < 0.75 ? 1 : 1 - (amount - 0.75) / 0.25);
-      if (amount >= 1) {
-        meteorGroup.remove(meteor.group);
-        meteor.group.traverse((object) => {
-          const disposable = object as THREE.Mesh;
-          disposable.geometry?.dispose();
-          if (disposable.material) {
-            const materials = Array.isArray(disposable.material) ? disposable.material : [disposable.material];
-            materials.forEach((material) => material.dispose());
-          }
-        });
-        meteors.splice(index, 1);
+      if (elapsedSinceStart > nextMeteorAt) {
+        spawnMeteor(snapshot.activeLanguage);
+        nextMeteorAt += 4.8;
       }
+
+      if (!reducedMotion) {
+        planetGroup.rotation.z += delta * bodySpeed * (1 - flightEase * 0.62);
+        backgroundStars.rotation.y += delta * (0.0015 + flightEase * 0.035);
+      }
+
+      for (let index = meteors.length - 1; index >= 0; index -= 1) {
+        const meteor = meteors[index];
+        meteor.elapsed += delta;
+        const amount = Math.min(1, Math.max(0, meteor.elapsed / meteor.duration));
+        const eased = 1 - Math.pow(1 - amount, 3);
+        meteor.group.position.lerpVectors(meteor.start, meteor.end, eased);
+        meteor.group.scale.setScalar(amount < 0.75 ? 1 : 1 - (amount - 0.75) / 0.25);
+        if (amount >= 1) {
+          meteorGroup.remove(meteor.group);
+          meteor.group.traverse((object) => {
+            const disposable = object as THREE.Mesh;
+            disposable.geometry?.dispose();
+            if (disposable.material) {
+              const materials = Array.isArray(disposable.material) ? disposable.material : [disposable.material];
+              materials.forEach((material) => material.dispose());
+            }
+          });
+          meteors.splice(index, 1);
+        }
+      }
+
+      renderer.render(scene, camera);
     }
 
-    renderer.render(scene, camera);
     animationFrame = requestAnimationFrame(animate);
   };
   animate();
 
   return () => {
     cancelAnimationFrame(animationFrame);
+    document.removeEventListener("visibilitychange", handleVisibilityChange);
     window.removeEventListener("resize", resize);
+    renderer.domElement.removeEventListener("webglcontextlost", handleContextLost);
+    renderer.domElement.removeEventListener("webglcontextrestored", handleContextRestored);
     variantStore.dispose();
     renderer.dispose();
     scene.traverse((object) => {
