@@ -167,9 +167,30 @@ h2 em { color: var(--violet); font-style: normal; }
 
 .space-bridge { position: relative; z-index: 1; min-height: 720svh; max-width: none; margin: 0; padding: 0 32px; overflow: hidden; display: block; isolation: isolate; background: linear-gradient(180deg, rgba(1, 2, 7, .16), rgba(3, 5, 14, .42) 64%, rgba(1, 2, 7, .7)); border: 0; }
 .space-bridge::before { content: ""; position: absolute; z-index: -1; inset: -20%; background: radial-gradient(circle at 50% 50%, transparent 0 20%, rgba(3, 5, 14, .12) 44%, rgba(1, 2, 7, .62) 100%); pointer-events: none; }
+.space-bridge-stars { position: absolute; z-index: -1; inset: -12%; pointer-events: none; background-image: radial-gradient(circle, rgba(211, 226, 255, .82) 0 1px, transparent 1.6px), radial-gradient(circle, rgba(123, 161, 255, .62) 0 1px, transparent 1.8px); background-size: 167px 139px, 293px 227px; background-position: 11px 31px, 71px 9px; opacity: .34; }
+.space-bridge-stars-back { opacity: .16; transform: scale(1.08); }
+.space-bridge-stars-mid { opacity: .28; transform: scale(1.02); }
+.space-bridge-stars-front { opacity: .44; background-size: 211px 173px, 347px 263px; mix-blend-mode: screen; }
+.space-bridge-orbit { position: absolute; z-index: 0; top: 50%; left: 50%; width: min(92vw, 1120px); aspect-ratio: 2.35 / 1; border: 1px solid rgba(125, 217, 222, .22); border-radius: 50%; opacity: calc(.22 + var(--flight-progress) * .18); transform: translate(-50%, -50%) rotate(-18deg); }
+.space-bridge-orbit::before, .space-bridge-orbit::after { content: ""; position: absolute; border: 1px solid rgba(184, 162, 255, .16); border-radius: 50%; }
+.space-bridge-orbit::before { inset: -10% 8%; transform: rotate(29deg); }
+.space-bridge-orbit::after { inset: 12% -7%; transform: rotate(-37deg); }
+.space-bridge-planet { position: absolute; z-index: 0; top: 50%; left: 50%; width: min(48vw, 560px); aspect-ratio: 1; border-radius: 50%; background: radial-gradient(circle at 42% 38%, rgba(239, 245, 255, .16) 0 3%, rgba(103, 133, 210, .1) 19%, transparent 55%); box-shadow: 0 0 120px rgba(83, 129, 255, .18), inset 0 0 80px rgba(48, 70, 145, .12); opacity: calc(.12 + var(--flight-progress) * .22); transform: translate(-50%, -50%) scale(calc(.76 + var(--flight-progress) * .24)); }
 .space-bridge-vignette { position: absolute; z-index: -1; inset: 0; background: radial-gradient(ellipse at 50% 45%, transparent 0 28%, rgba(0, 0, 0, .18) 62%, rgba(0, 0, 0, .72) 100%); pointer-events: none; }
-.space-bridge-arrival { position: fixed; top: 50%; left: 50%; z-index: 2; width: max-content; min-height: 0; margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; box-sizing: border-box; text-align: center; opacity: 0; transform: translate(-50%, -50%); transition: opacity .28s ease; }
-.space-bridge.is-arrived .space-bridge-arrival { opacity: 1; transform: translate(-50%, -50%); }
+.space-bridge-arrival { position: fixed; top: 50%; left: 50%; z-index: 2; width: min(520px, calc(100vw - 48px)); min-height: 0; margin: 0; padding: clamp(32px, 5vw, 56px) clamp(26px, 6vw, 70px) 42px; display: flex; flex-direction: column; align-items: center; justify-content: center; box-sizing: border-box; text-align: center; background: linear-gradient(145deg, rgba(17, 27, 55, .84), rgba(6, 10, 24, .78)); border: 1px solid rgba(178, 201, 255, .25); box-shadow: 0 30px 110px rgba(0, 0, 0, .44), 0 0 80px rgba(84, 111, 222, .14), inset 0 1px 0 rgba(255, 255, 255, .1); backdrop-filter: blur(14px); opacity: 0; transform: translate(-50%, -50%) translateY(12px); transition: opacity .38s ease, transform .55s cubic-bezier(.19, 1, .22, 1); }
+.space-bridge-arrival::before, .space-bridge-arrival::after { content: ""; position: absolute; width: 18px; height: 18px; border-color: rgba(125, 217, 222, .62); border-style: solid; pointer-events: none; }
+.space-bridge-arrival::before { top: -1px; left: -1px; border-width: 1px 0 0 1px; }
+.space-bridge-arrival::after { right: -1px; bottom: -1px; border-width: 0 1px 1px 0; }
+.space-bridge.is-arrived .space-bridge-arrival { opacity: 1; transform: translate(-50%, -50%) translateY(0); }
+.space-bridge-kicker { margin: 0 0 26px; color: var(--cyan); font-family: "SFMono-Regular", Consolas, monospace; font-size: 9px; letter-spacing: .2em; }
+.space-bridge-logo { display: block; width: min(190px, 58vw); height: auto; margin: 0 auto 25px; object-fit: contain; filter: drop-shadow(0 0 20px rgba(125, 217, 222, .22)); }
+.space-bridge-arrival h2 { margin: 0; color: var(--ink); font-size: clamp(42px, 6vw, 72px); line-height: .98; letter-spacing: -.045em; text-transform: none; }
+.space-bridge-arrival h2 em { color: var(--cyan); }
+.space-bridge-copy { max-width: 300px; margin: 22px 0 26px; color: var(--muted); font-size: 12px; line-height: 1.85; }
+.space-bridge-arrival .wired-button { width: min(264px, 100%); margin-top: 3px; }
+.space-bridge-note { margin: 22px 0 0; color: var(--faint); font-family: "SFMono-Regular", Consolas, monospace; font-size: 8px; letter-spacing: .16em; }
+.space-bridge-status { position: fixed; left: 32px; bottom: 32px; z-index: 2; display: flex; flex-direction: column; gap: 8px; color: var(--faint); font-family: "SFMono-Regular", Consolas, monospace; font-size: 9px; letter-spacing: .16em; opacity: clamp(0, calc(var(--flight-progress) * 4), 1); transition: opacity .25s ease; }
+.space-bridge-status b { color: var(--cyan); font-weight: 400; }
 .space-bridge-empty { margin: 0; color: #e0e0e0; font-size: 1.7rem; font-weight: 500; line-height: 1.3; text-shadow: 0 0 5px rgba(0, 0, 0, .5); }
 .space-bridge-login { margin-top: 30px; padding: 12px 35px; border: 2px solid white; border-radius: 30px; background-color: rgba(10, 10, 10, .85); box-shadow: 0 5px 20px rgba(0, 0, 0, .5); color: white; font-size: 1.4rem; font-weight: bold; text-decoration: none; white-space: nowrap; transition: background-color .2s, color .2s; }
 .space-bridge-login:hover { background-color: white; color: black; }
@@ -230,7 +251,9 @@ h2 em { color: var(--violet); font-style: normal; }
   .step h3 { margin-top: 22px; }
   .final-cta { min-height: 510px; margin: 0 18px; padding: 48px 24px; align-items: flex-start; }
   .space-bridge { min-height: 720svh; margin: 0; padding: 0 18px; }
-  .space-bridge-arrival { width: calc(100vw - 36px); }
+  .space-bridge-arrival { width: calc(100vw - 36px); padding: 30px 24px 34px; }
+  .space-bridge-logo { width: 154px; margin-bottom: 21px; }
+  .space-bridge-status { left: 18px; bottom: 24px; font-size: 8px; }
   .space-bridge-empty { font-size: 1.35rem; }
   .space-bridge-login { font-size: 1.15rem; }
   .cta-orbit { top: 68%; right: -42%; width: 130%; }
@@ -246,4 +269,5 @@ h2 em { color: var(--violet); font-style: normal; }
 
 @media (prefers-reduced-motion: reduce) {
   .global-planet-scene, .space-bridge-arrival { transition: none; }
+  .space-bridge-stars { animation: none; }
 }
