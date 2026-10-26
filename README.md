@@ -1,5 +1,7 @@
 # GitHubPlanet LP
 
+[日本語](README.md) | [English](README.en.md)
+
 GitHubPlanetの活動を、言語ごとの個性を持つ3D惑星として見せるランディングページです。
 
 > Your code, in orbit.
